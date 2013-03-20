@@ -2,3 +2,5 @@
 .buildpath
 vendor
 .settings
+report
+logs
