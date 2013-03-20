@@ -1,4 +1,15 @@
 {
+    "name": "niktux/khameleon",
+    "type": "library",
+    "description": "Khameleon is a filesystem abstraction layer",
+    "keywords": ["filesystem", "fs", "test", "unit test", "abstraction"],
+    "homepage": "https://github.com/Niktux/khameleon",
+    "authors": [
+        {
+            "name": "Nicolas Le Nardou",
+            "email": "nico.ln@gmail.com"
+        }    
+    ],
     "require-dev":
     {
         "phpunit/phpunit": ">=3.7.18"
