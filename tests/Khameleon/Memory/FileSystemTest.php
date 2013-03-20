@@ -21,7 +21,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $absolutePath = '/root/dir/subdir/file';
         $fileName = 'file';
         
-        $fr = $this->fs->get($relativePath);
+        $fr = $this->fs->file($relativePath);
         $fa = $this->fs->get($absolutePath);
         
         $this->assertInstanceOf('\Khameleon\File', $fr);
@@ -35,10 +35,10 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $filename = 'myfile';
         $this->assertFalse($this->fs->exists($filename), "<$filename> must not exist");
         
-        $fget = $this->fs->get($filename);
+        $ffile = $this->fs->file($filename);
         $this->assertTrue($this->fs->exists($filename), "<$filename> must has been created");
         
-        $ffile = $this->fs->file($filename);
+        $fget = $this->fs->get($filename);
         $this->assertTrue($this->fs->exists($filename), "<$filename> still must exist");
         
         $this->assertSame($fget, $ffile);
@@ -63,7 +63,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     public function testExists()
     {
         $path = 'path/to/my/file';
-        $f = $this->fs->get($path);
+        $f = $this->fs->file($path);
         
         $parts = explode('/', $path);
         // remove filename
@@ -76,7 +76,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue($this->fs->exists($path), "Directory <$path> must has been indirectly created");
             
             $directory = $this->fs->get($path);
-            $this->assertInstanceOf('\Khameleon\Directory', $directory, var_export($directory, true));
+            $this->assertInstanceOf('\Khameleon\Directory', $directory); //, var_export($directory, true));
         }
         
         $this->assertInstanceOf('\Khameleon\File', $f);
@@ -142,7 +142,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     public function testSanitizeRootDir($rootDir, $expected)
     {
         $fs = new \Khameleon\Memory\FileSystem($rootDir);
-        $f = $fs->get('file');
+        $f = $fs->file('file');
         
         $this->assertInstanceOf('\Khameleon\File', $f);
         $this->assertSame($expected, $f->getPath());
@@ -191,5 +191,13 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     
         $this->assertInstanceOf('\Khameleon\File', $f);
         $this->fs->directory($path);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\Exception
+     */
+    public function testInvalidGet()
+    {
+        $this->fs->get('not_exist');
     }
 }
