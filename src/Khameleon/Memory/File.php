@@ -5,6 +5,7 @@ namespace Khameleon\Memory;
 class File implements \Khameleon\File
 {
     private
+        $content,
         $name,
         $parent;
     
@@ -12,6 +13,8 @@ class File implements \Khameleon\File
     {
         $this->name = $name;
         $this->parent = $parent;
+        $parent->attach($this);
+        $this->content = null;
     }
     
     public function getPath()
@@ -22,5 +25,17 @@ class File implements \Khameleon\File
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function read()
+    {
+        return $this->content;
+    }
+    
+    public function write($content)
+    {
+        $this->content = $content;
+        
+        return $this;
     }
 }

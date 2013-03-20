@@ -9,7 +9,7 @@ class FileSystem implements \Khameleon\FileSystem
         $nodes,
         $root;
     
-    public function __construct($rootPath)
+    public function __construct($rootPath = '/')
     {
         $this->rootPath = $this->sanitizeRootPath($rootPath);
         $this->root = new Directory($this->rootPath, null);
@@ -60,7 +60,7 @@ class FileSystem implements \Khameleon\FileSystem
         
         if($node === null)
         {
-            $node = $this->createFile($absolutePath);
+            throw new \Khameleon\Exceptions\Exception("$path does not exist");
         }
         
         return $node;
