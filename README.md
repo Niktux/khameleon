@@ -1,7 +1,7 @@
 Khameleon
 =========
 
-Khameleon is a PHP5 library that provides a filesystem abstraction layer.
+Khameleon is a filesystem abstraction layer written in PHP 5.3.
 
 
 Aim
