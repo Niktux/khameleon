@@ -2,7 +2,7 @@
 
 namespace Khameleon;
 
-interface Directory extends Node
+interface Directory extends Node, \Countable
 {
     /**
      * @returns \Iterator

@@ -55,4 +55,9 @@ class Directory implements \Khameleon\Directory
     {
         $this->children[$node->getName()] = $node;
     }
+    
+    public function count()
+    {
+        return count($this->children);
+    }
 }
