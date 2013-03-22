@@ -95,13 +95,13 @@ class FileSystem implements \Khameleon\FileSystem
                 throw new \Khameleon\Exceptions\Exception("$path already exists and is not a file");
             }
             
-            $node = $this->createFile($path);
+            $node = $this->instantiateFile($path);
         }
         
         return $node;
     }
     
-    private function createFile($absolutePath)
+    private function instantiateFile($absolutePath)
     {
         $directory = $this->putDirectory(dirname($absolutePath));
         $file = new File(basename($absolutePath), $directory);
@@ -122,13 +122,13 @@ class FileSystem implements \Khameleon\FileSystem
                 throw new \Khameleon\Exceptions\Exception("$path already exists and is not a directory");
             }
         
-            $node = $this->createDirectory($path);
+            $node = $this->instantiateDirectory($path);
         }
         
         return $node;
     }
     
-    private function createDirectory($absolutePath)
+    private function instantiateDirectory($absolutePath)
     {
         $parent = $this->putDirectory(dirname($absolutePath));
         $dir = new Directory(basename($absolutePath), $parent);
