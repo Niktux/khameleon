@@ -1,4 +1,4 @@
-Khameleon
+Khameleon [![Build Status](https://travis-ci.org/Niktux/khameleon.png?branch=master)](https://travis-ci.org/Niktux/khameleon)
 =========
 
 Khameleon is a filesystem abstraction layer written in PHP 5.3.
