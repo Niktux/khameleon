@@ -2,8 +2,12 @@
 
 namespace Khameleon\Memory;
 
+use Khameleon\Traits\SearchableTrait;
+
 class Directory implements \Khameleon\Directory
 {
+    use SearchableTrait;
+    
     private
         $children,
         $name,

@@ -15,4 +15,10 @@ interface Directory extends Node
      * @throws \Khameleon\Exceptions\Exception
      */
     public function get($name);
+    
+    /**
+     * @returns \Iterator
+     */
+    public function search($regex);
+    
 }
