@@ -143,4 +143,29 @@ class FileSystem implements \Khameleon\FileSystem
         
         return isset($this->nodes[$absolutePath]);
     }
+    
+    public function createFile($path, $content = null)
+    {
+        if($this->exists($path))
+        {
+            throw new \Khameleon\Exceptions\AlreadyExistingNodeException($path);
+        }
+        
+        $file = $this->putFile($path);
+        $file->write($content);
+        
+        return $this;
+    }
+    
+    public function createDirectory($path)
+    {
+        if($this->exists($path))
+        {
+            throw new \Khameleon\Exceptions\AlreadyExistingNodeException($path);
+        }
+        
+        $this->putDirectory($path);
+        
+        return $this;
+    }
 }

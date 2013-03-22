@@ -208,4 +208,102 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     {
         $this->fs->get('not_exist');
     }
+    
+    public function testCreateFile()
+    {
+        $path = 'path/to/new/file';
+        $this->assertFalse($this->fs->exists($path));
+        
+        $content = 'This is ZE content';
+        $return = $this->fs->createFile($path, $content);
+        
+        $this->assertTrue(($this->fs->exists($path)));
+        
+        $file = $this->fs->get($path);
+        $this->assertInstanceOf('\Khameleon\File', $file);
+        $this->assertSame($content, $file->read());
+        $this->assertSame(self::ROOT_DIR . $path, $file->getPath());
+        
+        // fluid interface
+        $this->assertInstanceOf('\Khameleon\FileSystem', $return);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
+     */
+    public function testCreateFileTwice()
+    {
+        $path = 'path/to/x/file';
+        $this->fs
+            ->createFile($path)
+            ->createFile($path);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
+     */
+    public function testTryToCreateExistingFile()
+    {
+        $path = 'path/to/y/file';
+        $this->fs->putFile($path);
+        $this->fs->createFile($path);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
+     */
+    public function testTryToCreateFileOverExistingDirectoryPath()
+    {
+        $path = 'path/to/z/dir';
+        $this->fs->putDirectory($path);
+        $this->fs->createFile($path);
+    }
+        
+    public function testCreateDirectory()
+    {
+        $path = 'path/to/new/dir';
+        $this->assertFalse($this->fs->exists($path));
+    
+        $return = $this->fs->createDirectory($path);
+    
+        $this->assertTrue(($this->fs->exists($path)));
+    
+        $dir = $this->fs->get($path);
+        $this->assertInstanceOf('\Khameleon\Directory', $dir);
+        $this->assertSame(self::ROOT_DIR . $path, $dir->getPath());
+    
+        // fluid interface
+        $this->assertInstanceOf('\Khameleon\FileSystem', $return);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
+     */
+    public function testCreateDirectoryTwice()
+    {
+        $path = 'path/to/a/dir';
+        $this->fs
+            ->createDirectory($path)
+            ->createDirectory($path);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
+     */
+    public function testTryToCreateExistingDirectory()
+    {
+        $path = 'path/to/b/dir';
+        $this->fs->putDirectory($path);
+        $this->fs->createDirectory($path);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
+     */
+    public function testTryToCreateDirectoryOverExistingFilePath()
+    {
+        $path = 'path/to/c/file';
+        $this->fs->putFile($path);
+        $this->fs->createDirectory($path);
+    }
 }
