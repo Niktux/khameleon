@@ -23,6 +23,19 @@ class FileSystem implements \Khameleon\FileSystem
         return DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
     }
     
+    public function get($path)
+    {
+        $absolutePath = $this->getAbsolutePath($path);
+        $node = $this->fetchNode($absolutePath);
+        
+        if($node === null)
+        {
+            throw new \Khameleon\Exceptions\Exception("$path does not exist");
+        }
+        
+        return $node;
+    }
+    
     private function getAbsolutePath($path)
     {
         if($this->isAbsolute($path))
@@ -52,17 +65,21 @@ class FileSystem implements \Khameleon\FileSystem
             throw new \Khameleon\Exceptions\Exception("$path does not belong to this filesystem ($rootPath)");
         }
     }
-
-    public function get($path)
+    
+    private function getBasePath()
     {
-        $absolutePath = $this->getAbsolutePath($path);
-        $node = $this->fetchNode($absolutePath);
-        
-        if($node === null)
+        return rtrim($this->rootPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    }
+    
+    private function fetchNode($absolutePath)
+    {
+        $node = null;
+    
+        if(isset($this->nodes[$absolutePath]))
         {
-            throw new \Khameleon\Exceptions\Exception("$path does not exist");
+            $node = $this->nodes[$absolutePath];
         }
-        
+    
         return $node;
     }
     
@@ -120,27 +137,10 @@ class FileSystem implements \Khameleon\FileSystem
         return $dir;
     }
     
-    private function fetchNode($absolutePath)
-    {
-        $node = null;
-        
-        if(isset($this->nodes[$absolutePath]))
-        {
-            $node = $this->nodes[$absolutePath];
-        }
-        
-        return $node;
-    }
-    
     public function exists($path)
     {
         $absolutePath = $this->getAbsolutePath($path);
         
         return isset($this->nodes[$absolutePath]);
-    }
-    
-    private function getBasePath()
-    {
-        return rtrim($this->rootPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 }
