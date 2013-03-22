@@ -30,7 +30,7 @@ class FileSystem implements \Khameleon\FileSystem
         
         if($node === null)
         {
-            throw new \Khameleon\Exceptions\Exception("$path does not exist");
+            throw new \Khameleon\Exceptions\NodeNotFoundException("$path does not exist");
         }
         
         return $node;
@@ -62,7 +62,7 @@ class FileSystem implements \Khameleon\FileSystem
         
         if(stripos($path, $rootPath) !== 0)
         {
-            throw new \Khameleon\Exceptions\Exception("$path does not belong to this filesystem ($rootPath)");
+            throw new \Khameleon\Exceptions\InvalidMountingPointException("$path does not belong to this filesystem ($rootPath)");
         }
     }
     
@@ -92,7 +92,7 @@ class FileSystem implements \Khameleon\FileSystem
         {
             if($node !== null)
             {
-                throw new \Khameleon\Exceptions\Exception("$path already exists and is not a file");
+                throw new \Khameleon\Exceptions\WrongNodeTypeException($node, "$path already exists and is not a file");
             }
             
             $node = $this->instantiateFile($path);
@@ -119,7 +119,7 @@ class FileSystem implements \Khameleon\FileSystem
         {
             if($node !== null)
             {
-                throw new \Khameleon\Exceptions\Exception("$path already exists and is not a directory");
+                throw new \Khameleon\Exceptions\WrongNodeTypeException($node, "$path already exists and is not a directory");
             }
         
             $node = $this->instantiateDirectory($path);

@@ -2,6 +2,6 @@
 
 namespace Khameleon\Exceptions;
 
-class NodeNotFoundException extends NodeException
+class NodeNotFoundException extends Exception
 {
 }

@@ -14,12 +14,14 @@ interface FileSystem
     /**
      * @param string $path
      * @return \Khameleon\File
+     * @throws \Khameleon\Exceptions\WrongNodeTypeException
      */
     public function putFile($path);
     
     /**
      * @param string $path
      * @return \Khameleon\Directory
+     * @throws \Khameleon\Exceptions\WrongNodeTypeException
      */
     public function putDirectory($path);
     
@@ -35,7 +37,7 @@ interface FileSystem
      * @param string $path
      * @param string $content
      * @return \Khameleon\FileSystem
-     * @throws \Khameleon\Exceptions\Exception
+     * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      */
     public function createFile($path, $content = null);
     
@@ -44,7 +46,7 @@ interface FileSystem
      *
      * @param string $path
      * @return \Khameleon\FileSystem
-     * @throws \Khameleon\Exceptions\Exception
+     * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      */
     public function createDirectory($path);
     

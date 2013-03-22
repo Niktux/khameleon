@@ -129,11 +129,19 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \Khameleon\Exceptions\Exception
+     * @expectedException \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function testInvalidAbsolutePath()
     {
         $this->fs->get('/this/is/an/absolute/path/outside/mounting/point');
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\NodeNotFoundException
+     */
+    public function testNotExistingGet()
+    {
+        $this->fs->get('path/to/nowhere');
     }
     
     /**
@@ -170,7 +178,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \Khameleon\Exceptions\Exception
+     * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
      */
     public function testInvalidFile()
     {
@@ -182,7 +190,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \Khameleon\Exceptions\Exception
+     * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
      */
     public function testInvalidDirectory()
     {
