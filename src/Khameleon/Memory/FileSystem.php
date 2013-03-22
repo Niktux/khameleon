@@ -66,7 +66,7 @@ class FileSystem implements \Khameleon\FileSystem
         return $node;
     }
     
-    public function file($path)
+    public function putFile($path)
     {
         $path = $this->getAbsolutePath($path);
         $node = $this->fetchNode($path);
@@ -86,14 +86,14 @@ class FileSystem implements \Khameleon\FileSystem
     
     private function createFile($absolutePath)
     {
-        $directory = $this->directory(dirname($absolutePath));
+        $directory = $this->putDirectory(dirname($absolutePath));
         $file = new File(basename($absolutePath), $directory);
         $this->nodes[$absolutePath] = $file;
         
         return $file;
     }
     
-    public function directory($path)
+    public function putDirectory($path)
     {
         $path = $this->getAbsolutePath($path);
         $node = $this->fetchNode($path);
@@ -113,7 +113,7 @@ class FileSystem implements \Khameleon\FileSystem
     
     private function createDirectory($absolutePath)
     {
-        $parent = $this->directory(dirname($absolutePath));
+        $parent = $this->putDirectory(dirname($absolutePath));
         $dir = new Directory(basename($absolutePath), $parent);
         $this->nodes[$absolutePath] = $dir;
         

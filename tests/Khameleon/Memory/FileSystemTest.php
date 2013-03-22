@@ -21,7 +21,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $absolutePath = '/root/dir/subdir/file';
         $fileName = 'file';
         
-        $fr = $this->fs->file($relativePath);
+        $fr = $this->fs->putFile($relativePath);
         $fa = $this->fs->get($absolutePath);
         
         $this->assertInstanceOf('\Khameleon\File', $fr);
@@ -35,7 +35,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $filename = 'myfile';
         $this->assertFalse($this->fs->exists($filename), "<$filename> must not exist");
         
-        $ffile = $this->fs->file($filename);
+        $ffile = $this->fs->putFile($filename);
         $this->assertTrue($this->fs->exists($filename), "<$filename> must has been created");
         
         $fget = $this->fs->get($filename);
@@ -51,7 +51,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $dirname = 'mydir';
         $this->assertFalse($this->fs->exists($dirname));
         
-        $ddir = $this->fs->directory($dirname);
+        $ddir = $this->fs->putDirectory($dirname);
         $this->assertTrue($this->fs->exists($dirname));
         
         $dget = $this->fs->get($dirname);
@@ -63,7 +63,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     public function testExists()
     {
         $path = 'path/to/my/file';
-        $f = $this->fs->file($path);
+        $f = $this->fs->putFile($path);
         
         $parts = explode('/', $path);
         // remove filename
@@ -89,7 +89,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->fs->exists($path), "<$path> should not exist");
         
-        $f = $this->fs->file($path);
+        $f = $this->fs->putFile($path);
         
         $this->assertInstanceOf('\Khameleon\File', $f);
         $this->assertTrue($this->fs->exists($path), "<$path> should exist");
@@ -112,7 +112,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->fs->exists($path), "<$path> should not exist");
         
-        $d = $this->fs->directory($path);
+        $d = $this->fs->putDirectory($path);
         
         $this->assertInstanceOf('\Khameleon\Directory', $d);
         $this->assertTrue($this->fs->exists($path), "<$path> should exist");
@@ -142,7 +142,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     public function testSanitizeRootDir($rootDir, $expected)
     {
         $fs = new \Khameleon\Memory\FileSystem($rootDir);
-        $f = $fs->file('file');
+        $f = $fs->putFile('file');
         
         $this->assertInstanceOf('\Khameleon\File', $f);
         $this->assertSame($expected, $f->getPath());
@@ -175,10 +175,10 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     public function testInvalidFile()
     {
         $path = 'subdir';
-        $d = $this->fs->directory($path);
+        $d = $this->fs->putDirectory($path);
         
         $this->assertInstanceOf('\Khameleon\Directory', $d);
-        $this->fs->file($path);
+        $this->fs->putFile($path);
     }
     
     /**
@@ -187,10 +187,10 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     public function testInvalidDirectory()
     {
         $path = 'myfile';
-        $f = $this->fs->file($path);
+        $f = $this->fs->putFile($path);
     
         $this->assertInstanceOf('\Khameleon\File', $f);
-        $this->fs->directory($path);
+        $this->fs->putDirectory($path);
     }
     
     /**

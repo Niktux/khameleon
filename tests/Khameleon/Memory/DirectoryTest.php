@@ -15,10 +15,10 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $this->fs = new \Khameleon\Memory\FileSystem('/');
         
         $this->files = array();
-        $this->files[] = $this->fs->file('dir/readme.txt');
-        $this->files[] = $this->fs->file('dir/conf.ini');
-        $this->files[] = $this->fs->file('dir/content.cache');
-        $this->otherFile = $this->fs->file('otherdir/content.cache');
+        $this->files[] = $this->fs->putFile('dir/readme.txt');
+        $this->files[] = $this->fs->putFile('dir/conf.ini');
+        $this->files[] = $this->fs->putFile('dir/content.cache');
+        $this->otherFile = $this->fs->putFile('otherdir/content.cache');
         
         $this->dir = $this->fs->get('dir');
         $this->assertInstanceOf('\Khameleon\Directory', $this->dir);

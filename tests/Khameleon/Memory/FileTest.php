@@ -18,7 +18,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
         
         $this->assertFalse($this->fs->exists($path), "File <$path> should not exist");
         
-        $f = $this->fs->file($path);
+        $f = $this->fs->putFile($path);
         $this->assertTrue($this->fs->exists($path), "File <$path> should have been created");
         $this->assertEmpty($f->read(), "File <$path> should be empty");
         
@@ -27,7 +27,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($f->read(), "File <$path> should not be empty anymore");
         $this->assertSame($content, $f->read(), "File <$path> should contain the correct content");
         
-        $otherFile = $this->fs->file('path/to/other/file');
+        $otherFile = $this->fs->putFile('path/to/other/file');
         $otherFile->write('another content');
         
         $this->assertSame($content, $f->read(), "File <$path> should still contain the same content");
