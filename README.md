@@ -34,7 +34,7 @@ $obj = new MyClass(new Khameleon\Local\FileSystem());
 <?php
 
 $fs = new Khameleon\Local\FileSystem();
-$file = $fs->file('path/to/myfile');
+$file = $fs->putFile('path/to/myfile');
 $content = $file->read();
 
 $dir = $fs->get('path/to');
@@ -59,7 +59,7 @@ class MyClassTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $fs = new Khameleon\Memory\FileSystem();
-        $file = $fs->file('path/to/myfile');
+        $file = $fs->putFile('path/to/myfile');
         $file->write('test data');
         
         $obj = new MyClass($fs);
@@ -77,7 +77,7 @@ This project is young : interfaces must be extended (unlink, recursive search, .
 $fs = new Khameleon\Memory\FileSystem();
 $fs->writeFile('/test/file1', 'content')
    ->writeFile('/test/file2', 'other content')
-   ->directory('/test')
+   ->putDirectory('/test')
    ->writeFile('file3', 'still different content');
 
 ```
