@@ -75,10 +75,10 @@ Development status
 This project is young : interfaces must be extended (unlink, recursive search, ... etc), other implementations must be done (local, ftp, db, memcache, ...), fluid interface like example below :
 ```php
 $fs = new Khameleon\Memory\FileSystem();
-$fs->writeFile('/test/file1', 'content')
-   ->writeFile('/test/file2', 'other content')
-   ->putDirectory('/test')
-   ->writeFile('file3', 'still different content');
+$fs->createFile('/test/file1', 'content')
+   ->createFile('/test/file2', 'other content')
+   ->createDirectory('/test')
+   ->createFile('file3', 'still different content');
 
 ```
 
