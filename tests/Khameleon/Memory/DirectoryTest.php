@@ -134,4 +134,26 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $children = iterator_to_array($parentDir->read());
         $this->assertNotContains($dir, $children);
     }
+    
+    /**
+     * @dataProvider providerTestEmpty
+     */
+    public function testEmpty($path, $expected)
+    {
+        $dir = $this->fs->get($path);
+        $this->assertSame($expected, $dir->isEmpty());
+    }
+    
+    public function providerTestEmpty()
+    {
+        return array(
+            array('/', false),
+            array('dir', false),
+            array('dir/subdir', false),
+            array('otherdir', false),
+            array('dir/subdir/deeperDir/', false),
+                
+            array('some/empty/dir', true),
+        );
+    }
 }

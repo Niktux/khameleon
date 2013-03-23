@@ -92,6 +92,11 @@ class Directory implements \Khameleon\Directory
         return count($this->children);
     }
     
+    public function isEmpty()
+    {
+        return empty($this->children);
+    }
+    
     public function unlink()
     {
         if($this->parent !== null)

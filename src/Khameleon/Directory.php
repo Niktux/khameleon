@@ -20,4 +20,9 @@ interface Directory extends Node, \Countable
      * @throws \Khameleon\Exceptions\Exception
      */
     public function get($name);
+    
+    /**
+     * @returns boolean
+     */
+    public function isEmpty();
 }
