@@ -15,41 +15,59 @@ class NodeTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerTestRename
      */
-    public function testRename($newName)
+    public function testRename($newName, $useFileSystemObject)
     {
         $oldName = 'file';
-        $f = $this->fs->putFile("path/to/$oldName");
+        $oldPath = "path/to/$oldName";
         
-        $this->assertTrue($this->fs->exists($p = "path/to/$oldName"), "$p should exist");
+        $f = $this->fs->putFile($oldPath);
+    
+        $this->assertTrue($this->fs->exists($oldPath), "$oldPath should exist");
         $this->assertSame('file', $f->getName());
         $this->assertSame("/path/to/$oldName", $f->getPath());
-        
-        $f->rename($newName);
-        
+    
+        if($useFileSystemObject === true)
+        {
+            $this->fs->rename($oldPath, $newName);
+        }
+        else
+        {
+            $f->rename($newName);
+        }
+    
         if($newName !== $oldName)
         {
-            $this->assertFalse($this->fs->exists($p = "path/to/$oldName"), "$p should not exist anymore");
+            $this->assertFalse($this->fs->exists($oldPath), "$oldPath should not exist anymore");
         }
-        
+    
         $this->assertTrue($this->fs->exists($p = "path/to/$newName"), "$p should exist");
         $this->assertSame($newName, $f->getName());
         $this->assertSame("/path/to/$newName", $f->getPath());
-        
+    
         $this->assertInstanceOf('\Khameleon\File', $this->fs->get("path/to/$newName"));
     }
     
     public function providerTestRename()
     {
-        return array(
-            array(' '),
-            array('   '),
-            array('toto'),
-            array('name with blanks'),
-            array('file'), // same name
-            array(' file'),
-            array('file '),
-            array(' file '),
+        $names = array(
+            ' ',
+            '   ',
+            'toto',
+            'name with blanks',
+            'file', // same name
+            ' file',
+            'file ',
+            ' file ',
         );
+        
+        $cases = array();
+        foreach($names as $name)
+        {
+            $cases[] = array($name, true);
+            $cases[] = array($name, false);
+        }
+        
+        return $cases;
      }
     
     /**
@@ -61,6 +79,16 @@ class NodeTest extends \PHPUnit_Framework_TestCase
         $this->fs->putFile('path/to/file')->rename($newName);
     }
     
+    /**
+     * @dataProvider providerTestRenameError
+     * @expectedException \Khameleon\Exceptions\InvalidNameException
+     */
+    public function testRenameUsingFileSystemError($newName)
+    {
+        $path = 'path/to/file';
+        $this->fs->createFile($path)->rename($path, $newName);
+    }
+      
     public function providerTestRenameError()
     {
         return array(

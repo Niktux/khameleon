@@ -271,4 +271,10 @@ class FileSystem implements \Khameleon\FileSystem
         $absolutePath = $this->getAbsolutePath($node->getPath());
         $this->nodes[$absolutePath] = $node;
     }
+    
+    public function rename($path, $newName)
+    {
+        $node = $this->get($path);
+        $node->rename($newName);
+    }
 }

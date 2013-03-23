@@ -150,7 +150,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Khameleon\Exceptions\InvalidMountingPointException
      */
-    public function testInvalidAbsolutePath()
+    public function testGetInvalidAbsolutePath()
     {
         $this->fs->get('/this/is/an/absolute/path/outside/mounting/point');
     }
@@ -158,7 +158,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Khameleon\Exceptions\NodeNotFoundException
      */
-    public function testNotExistingGet()
+    public function testGetInvalidRelativePath()
     {
         $this->fs->get('path/to/nowhere');
     }
@@ -194,14 +194,6 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
             array('.',  '/file'),
             array('./', '/file'),
         );
-    }
-    
-    /**
-     * @expectedException \Khameleon\Exceptions\Exception
-     */
-    public function testInvalidGet()
-    {
-        $this->fs->get('not_exist');
     }
     
     public function testCreateFile()
@@ -629,5 +621,24 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
             array(self::ROOT_DIR, true, false),
             array('/root', false, false),
             );
+    }
+    
+    /**
+     * NOTICE : other tests are in NodeTest (shared test code & provider)
+     *
+     * @dataProvider providerTestRenameInvalid
+     * @expectedException \Khameleon\Exceptions\Exception
+     */
+    public function testRenameInvalid($invalidPath)
+    {
+        $this->fs->rename($invalidPath, 'newname');
+    }
+    
+    public function providerTestRenameInvalid()
+    {
+        return array(
+            array('path/to/nowhere'),
+            array('/invalid/root'),
+        );
     }
 }

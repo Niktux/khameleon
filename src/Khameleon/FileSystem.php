@@ -82,5 +82,16 @@ interface FileSystem
      */
     public function isPathValid($path, $mustBeRelative = false);
     
+    /**
+     * Rename a node
+     *
+     * @param string $path
+     * @param string $newName path is not allowed (use move instead)
+     * @throws \Khameleon\Exceptions\InvalidNameException
+     * @throws \Khameleon\Exceptions\NodeNotFoundException
+     * @throws \Khameleon\Exceptions\InvalidMountingPointException
+     */
+    public function rename($path, $newName);
+    
     //public function mount($path, Directory $subroot);
 }
