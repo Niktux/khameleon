@@ -12,7 +12,7 @@ interface Node
     /**
      * Rename node
      *
-     * @param string $newName path are not allowed (use move instead)
+     * @param string $newName path is not allowed (use move instead)
      * @throws \Khameleon\Exceptions\InvalidNameException
      */
     public function rename($newName);
