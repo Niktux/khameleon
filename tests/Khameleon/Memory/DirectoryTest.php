@@ -176,6 +176,26 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @dataProvider providerTestCannotRemoveRoot
+     * @expectedException \Khameleon\Exceptions\RemovalException
+     */
+    public function testCannotRemoveRoot($removeMethod)
+    {
+        $root = $this->fs->get('/');
+        $this->assertInstanceOf('\Khameleon\Directory', $root);
+        
+        $root->$removeMethod();
+    }
+    
+    public function providerTestCannotRemoveRoot()
+    {
+        return array(
+            array('remove'),
+            array('recursiveRemove')
+        );
+    }
+    
+    /**
      * @dataProvider providerTestEmpty
      */
     public function testEmpty($path, $expected)
