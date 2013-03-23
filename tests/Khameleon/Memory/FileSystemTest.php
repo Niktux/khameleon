@@ -469,15 +469,20 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $removeMethod($this->fs, 'i/have/never/existed');
     }
 
-    /**
-     * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
-     */
     public function testRecursiveRemoveOnFile()
     {
         $path = 'path/to/new/file';
-        $this->fs->createFile($path);
+        $file = $this->fs->putFile($path);
+        
+        $parent = $this->fs->get(dirname($path));
+        
+        $this->assertTrue($this->fs->exists($path));
+        $this->assertContains($file, $parent->read());
         
         $this->fs->recursiveRemove($path);
+        
+        $this->assertFalse($this->fs->exists($path));
+        $this->assertNotContains($file, $parent->read());
     }
     
     public function testRecursiveRemove()

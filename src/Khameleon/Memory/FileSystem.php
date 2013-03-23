@@ -218,20 +218,18 @@ class FileSystem implements \Khameleon\FileSystem
         $absolutePath = $this->getAbsolutePath($path);
         $node = $this->fetchNodeForRemoval($absolutePath);
         
-        if(! $node instanceof \Khameleon\Directory)
+        if($node instanceof Directory)
         {
-            throw new WrongNodeTypeException($node, "$path is not a directory");
-        }
-        
-        foreach($node->read() as $child)
-        {
-            if($child instanceof Directory)
+            foreach($node->read() as $child)
             {
-                $this->recursiveRemove($child->getPath());
-            }
-            else
-            {
-                $this->unregisterNode($child);
+                if($child instanceof Directory)
+                {
+                    $this->recursiveRemove($child->getPath());
+                }
+                else
+                {
+                    $this->unregisterNode($child);
+                }
             }
         }
         
