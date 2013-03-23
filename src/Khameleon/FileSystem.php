@@ -92,6 +92,4 @@ interface FileSystem
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function rename($path, $newName);
-    
-    //public function mount($path, Directory $subroot);
 }
