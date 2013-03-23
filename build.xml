@@ -44,6 +44,7 @@
    <arg value="install" />
    <arg path="--dev" />
   </exec>
+ </target>
 
  <target name="lint" description="Perform syntax check of sourcecode files">
   <apply executable="php" failonerror="true">
