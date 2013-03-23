@@ -1,12 +1,14 @@
 <phpdox xmlns="http://phpdox.de/config">
- <project name="Khameleon" source="src" workdir="build/phpdox">
-  <collector publiconly="false">
-   <include mask="*.php" />
-   <exclude mask="*autoload.php" />
-  </collector>
+    <project name="Khameleon" source="src" workdir="build/phpdox">
 
-  <generator output="build">
-   <build engine="html" enabled="true" output="api"/>
-  </generator>
- </project>
+        <collector publiconly="true">
+            <include mask="*.php" />
+            <exclude mask="*autoload.php" />
+        </collector>
+
+        <generator output="build">
+            <build engine="html" enabled="true" output="api"/>
+        </generator>
+        
+    </project>
 </phpdox>
