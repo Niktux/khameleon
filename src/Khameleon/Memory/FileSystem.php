@@ -36,7 +36,7 @@ class FileSystem implements \Khameleon\FileSystem
         $absolutePath = $this->getAbsolutePath($path);
         $node = $this->fetchNode($absolutePath);
         
-        if($node === null)
+        if(! $node instanceof \Khameleon\Node)
         {
             throw new NodeNotFoundException("$path does not exist");
         }
