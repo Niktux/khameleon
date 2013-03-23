@@ -34,7 +34,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($content, $otherFile->read(), "Other file should contain another content");
     }
     
-    public function testRemove()
+    /**
+     * @dataProvider providerTestRemove
+     */
+    public function testRemove($removeMethod)
     {
         $path = 'path/to/my/file';
         
@@ -45,11 +48,19 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $children = iterator_to_array($dir->read());
         $this->assertContains($file, $children);
         
-        $file->remove();
+        $file->$removeMethod();
         
         $this->assertFalse($this->fs->exists($path), "$path should not exist after remove()");
         $this->assertEquals($nbChildren - 1, count($dir));
         $children = iterator_to_array($dir->read());
         $this->assertNotContains($file, $children);
+    }
+    
+    public function providerTestRemove()
+    {
+        return array(
+            array('remove'),
+            array('recursiveRemove')
+        );
     }
 }

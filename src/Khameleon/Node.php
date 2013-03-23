@@ -7,4 +7,5 @@ interface Node
     public function getPath();
     public function getName();
     public function remove();
+    public function recursiveRemove();
 }
