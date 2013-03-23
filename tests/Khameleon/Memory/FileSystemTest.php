@@ -326,11 +326,11 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $this->fs->createDirectory($path);
     }
     
-    public function providerCommonRemoveTests()
+    public function providerRemoveMethod()
     {
         return array(
-            array(function ($fs, $path){$fs->remove($path); }),
-            array(function ($fs, $path){$fs->recursiveRemove($path); }),
+            array('remove'),
+            array('recursiveRemove'),
         );
     }
     
@@ -386,27 +386,27 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @dataProvider providerCommonRemoveTests
+     * @dataProvider providerRemoveMethod
      */
-    public function testRemoveAllDirs(\Closure $removeMethod)
+    public function testRemoveAllDirs($removeMethod)
     {
         $fs = new \Khameleon\Memory\FileSystem('/');
         $dir = $fs->putDirectory('one/two/three/four');
         $this->assertEquals(0, count($dir));
         
-        $removeMethod($fs, $p = 'one/two/three/four');
+        $fs->$removeMethod($p = 'one/two/three/four');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('one/two/three'));
         
-        $removeMethod($fs, $p = 'one/two/three');
+        $fs->$removeMethod($p = 'one/two/three');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('one/two'));
         
-        $removeMethod($fs, $p = 'one/two');
+        $fs->$removeMethod($p = 'one/two');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('one'));
         
-        $removeMethod($fs, $p = 'one');
+        $fs->$removeMethod($p = 'one');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('/'));
     }
@@ -444,12 +444,12 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @dataProvider providerCommonRemoveTests
+     * @dataProvider providerRemoveMethod
      * @expectedException \Khameleon\Exceptions\RemovalException
      */
-    public function testCannotRemoveRoot(\Closure $removeMethod)
+    public function testCannotRemoveRoot($removeMethod)
     {
-       $removeMethod($this->fs, self::ROOT_DIR);
+       $this->fs->$removeMethod(self::ROOT_DIR);
     }
     
     /**
@@ -461,12 +461,12 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @dataProvider providerCommonRemoveTests
+     * @dataProvider providerRemoveMethod
      * @expectedException \Khameleon\Exceptions\NodeNotFoundException
      */
-    public function testTryToRemoveNotExistingDirectory(\Closure $removeMethod)
+    public function testTryToRemoveNotExistingDirectory($removeMethod)
     {
-        $removeMethod($this->fs, 'i/have/never/existed');
+        $this->fs->$removeMethod('i/have/never/existed');
     }
 
     public function testRecursiveRemoveOnFile()
