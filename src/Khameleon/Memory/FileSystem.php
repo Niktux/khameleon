@@ -187,7 +187,7 @@ class FileSystem implements \Khameleon\FileSystem
             throw new NodeNotFoundException("$absolutePath does not exist");
         }
         
-        if($node instanceof \Khameleon\Directory && count($node) !== 0)
+        if($node instanceof \Khameleon\Directory && $node->isEmpty() !== true)
         {
             throw new RemovalException("$absolutePath is not an empty directory");
         }
