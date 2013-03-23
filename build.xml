@@ -10,7 +10,6 @@
   <delete dir="${basedir}/build/coverage"/>
   <delete dir="${basedir}/build/logs"/>
   <delete dir="${basedir}/build/pdepend"/>
-  <delete dir="${basedir}/vendor"/>
  </target>
 
  <target name="prepare" depends="clean" description="Prepare for build">
@@ -97,7 +96,7 @@
  <target name="phpunit" description="Run unit tests with PHPUnit">
   <exec executable="vendor/bin/phpunit" dir="${basedir}" failonerror="true">
    <arg value="-c" />
-   <arg path="${basedir}/phpunit.dist.xml" />
+   <arg path="phpunit.xml.dist" />
    <arg value="--coverage-html" />
    <arg path="${basedir}/build/coverage" />
    <arg value="tests" />
