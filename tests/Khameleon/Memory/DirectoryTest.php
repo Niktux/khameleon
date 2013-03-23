@@ -245,16 +245,29 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
     
     public function providerTestPutFileAndDirectory()
     {
-        return array(
-            array('newfile', '/dir/subdir/newfile', true),
-            array('newfile/', '/dir/subdir/newfile', true),
-            array('folder/file', '/dir/subdir/folder/file', true),
-            array('folder/file/', '/dir/subdir/folder/file', true),
-            array('d/i/r/file', '/dir/subdir/d/i/r/file', true),
-            array('d/i/r/file/', '/dir/subdir/d/i/r/file', true),
-            array('dir/subdir', '/dir/subdir/dir/subdir', true),
-            array('dir/subdir/file', '/dir/subdir/dir/subdir/file', true),
+        $cases = array(
+            array('newfile', '/dir/subdir/newfile'),
+            array('newfile/', '/dir/subdir/newfile'),
+            array(' newfile ', '/dir/subdir/ newfile '),
+            array('folder/file', '/dir/subdir/folder/file'),
+            array('folder/file/', '/dir/subdir/folder/file'),
+            array('d/i/r/file', '/dir/subdir/d/i/r/file'),
+            array('d/i/r/file/', '/dir/subdir/d/i/r/file'),
+            array('dir/subdir', '/dir/subdir/dir/subdir'),
+            array('dir/subdir/file', '/dir/subdir/dir/subdir/file'),
         );
+        
+        $filePaths = array_map(function ($case){
+            array_push($case, true);
+            return $case;
+        }, $cases);
+        
+        $dirPaths = array_map(function ($case){
+            array_push($case, false);
+            return $case;
+        }, $cases);
+        
+        return array_merge($filePaths, $dirPaths);
     }
     
     /**

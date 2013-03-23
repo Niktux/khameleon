@@ -102,6 +102,6 @@ class Directory extends Node implements \Khameleon\Directory
             throw new InvalidPathException(is_string($relativePath) ? $relativePath : null);
         }
         
-        return $this->getPath() . DIRECTORY_SEPARATOR . rtrim($relativePath);
+        return $this->getPath() . DIRECTORY_SEPARATOR . rtrim($relativePath, DIRECTORY_SEPARATOR);
     }
 }
