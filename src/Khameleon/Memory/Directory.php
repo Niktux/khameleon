@@ -97,7 +97,7 @@ class Directory implements \Khameleon\Directory
         return empty($this->children);
     }
     
-    public function unlink()
+    public function detachFromParent()
     {
         if($this->parent !== null)
         {

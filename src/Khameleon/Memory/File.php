@@ -42,7 +42,7 @@ class File implements \Khameleon\File
         return $this;
     }
     
-    public function unlink()
+    public function detachFromParent()
     {
         $this->parent->detach($this);
     }

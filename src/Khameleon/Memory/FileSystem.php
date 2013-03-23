@@ -198,7 +198,7 @@ class FileSystem implements \Khameleon\FileSystem
         }
         
         unset($this->nodes[$absolutePath]);
-        $node->unlink();
+        $node->detachFromParent();
     }
     
     public function removeDirectory($path)
