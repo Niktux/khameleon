@@ -177,30 +177,34 @@ class FileSystem implements \Khameleon\FileSystem
         return $this;
     }
     
-    public function remove($path)
+    public function remove($input)
     {
-        $absolutePath = $this->getAbsolutePath($path);
-        $node = $this->fetchNodeForRemoval($absolutePath);
-        $this->checkRemovalPreconditions($node);
+        $node = $this->convertRemovalInputToNode($input);
         
         if($node instanceof \Khameleon\Directory && $node->isEmpty() !== true)
         {
-            throw new RemovalException("$absolutePath is not an empty directory");
+            throw new RemovalException($node->getPath() . ' is not an empty directory');
         }
         
         $this->unregisterNode($node);
     }
     
-    private function fetchNodeForRemoval($absolutePath)
+    private function convertRemovalInputToNode($removalInput)
     {
-        $node = $this->fetchNode($absolutePath);
-        
-        if($node === null)
+        if(! $removalInput instanceof \Khameleon\Node)
         {
-            throw new NodeNotFoundException("$absolutePath does not exist");
+            $absolutePath = $this->getAbsolutePath($removalInput);
+            $removalInput = $this->fetchNode($absolutePath);
+        
+            if($removalInput === null)
+            {
+                throw new NodeNotFoundException("$absolutePath does not exist");
+            }
         }
         
-        return $node;
+        $this->checkRemovalPreconditions($removalInput);
+        
+        return $removalInput;
     }
     
     private function checkRemovalPreconditions(\Khameleon\Node $node)
@@ -219,15 +223,8 @@ class FileSystem implements \Khameleon\FileSystem
     
     public function recursiveRemove($input)
     {
-        if(! $input instanceof \Khameleon\Node)
-        {
-            $absolutePath = $this->getAbsolutePath($input);
-            $input = $this->fetchNodeForRemoval($absolutePath);
-        }
+        $node = $this->convertRemovalInputToNode($input);
         
-        $node = $input;
-        
-        $this->checkRemovalPreconditions($node);
         if($node instanceof Directory)
         {
             foreach($node->read() as $child)

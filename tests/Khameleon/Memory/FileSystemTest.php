@@ -510,4 +510,45 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty(iterator_to_array($fs->get($p = 'one')->recursiveRead()));
     }
     
+    /**
+     * @dataProvider providerRemoveMethod
+     */
+    public function testRemoveOnNodes($removeMethod)
+    {
+        $dir = $this->fs->putDirectory('dir');
+        $file = $this->fs->putFile('file');
+
+        $this->fs->$removeMethod($dir);
+        $this->assertFalse($this->fs->exists('dir'));
+        
+        $this->fs->$removeMethod($file);
+        $this->assertFalse($this->fs->exists('file'));
+    }
+    
+    /**
+     * @dataProvider providerTestRemoveWithInvalidParameters
+     * @expectedException Khameleon\Exceptions\NodeNotFoundException
+     */
+    public function testRemoveWithInvalidParameters($removeMethod, $input)
+    {
+        $this->fs->$removeMethod(null);
+    }
+    
+    public function providerTestRemoveWithInvalidParameters()
+    {
+        $inputs = array( null, '', ' ', array(), function (){}, 42, new \StdClass);
+        $removeMethods = array('remove', 'recursiveRemove');
+        
+        $datas = array();
+        foreach($removeMethods as $method)
+        {
+            foreach($inputs as $input)
+            {
+                $datas[] = array($method, $input);
+            }
+        }
+        
+        return $datas;
+    }
+    
 }

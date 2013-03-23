@@ -57,18 +57,18 @@ interface FileSystem
     public function createDirectory($path);
     
     /**
-     * Remove a file or an empty directory
+     * Remove a node (directories must be empty)
      *
-     * @param string path
+     * @param string|\Khameleon\Node node to remove
      * @throws \Khameleon\Exceptions\RemovalException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function remove($path);
     
     /**
-     * Remove recursively a directory
+     * Remove recursively a node
      *
-     * @param string path
+     * @param string|\Khameleon\Node node to remove
      * @throws \Khameleon\Exceptions\RemovalException
      * @throws \Khameleon\Exceptions\WrongNodeTypeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
@@ -76,6 +76,4 @@ interface FileSystem
     public function recursiveRemove($path);
     
     //public function mount($path, Directory $subroot);
-  //  public function writeFile($path, $content);
-    
 }
