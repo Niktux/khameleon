@@ -2,32 +2,16 @@
 
 namespace Khameleon\Memory;
 
-class File implements \Khameleon\File
+class File extends Node implements \Khameleon\File
 {
     private
-        $fileSystem,
-        $name,
-        $parent,
         $content;
     
     public function __construct(FileSystem $fs, $name, Directory $parent)
     {
-        $this->fileSystem = $fs;
-        $this->name = $name;
-        $this->parent = $parent;
-        $this->content = null;
+        parent::__construct($fs, $name, $parent);
         
-        $parent->attach($this);
-    }
-    
-    public function getPath()
-    {
-        return $this->parent->getPath() . DIRECTORY_SEPARATOR . $this->name;
-    }
-    
-    public function getName()
-    {
-        return $this->name;
+        $this->content = null;
     }
     
     public function read()
@@ -45,15 +29,5 @@ class File implements \Khameleon\File
     public function detachFromParent()
     {
         $this->parent->detach($this);
-    }
-
-    public function remove()
-    {
-        $this->fileSystem->remove($this);
-    }
-
-    public function recursiveRemove()
-    {
-        $this->fileSystem->recursiveRemove($this);
     }
 }

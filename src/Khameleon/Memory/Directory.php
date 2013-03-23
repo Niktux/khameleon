@@ -2,43 +2,18 @@
 
 namespace Khameleon\Memory;
 
-use Khameleon\Node;
 use Khameleon\Exceptions\NodeNotFoundException;
 
-class Directory implements \Khameleon\Directory
+class Directory extends Node implements \Khameleon\Directory
 {
     private
-        $fileSystem,
-        $name,
-        $parent,
         $children;
     
     public function __construct(FileSystem $fs, $name, Directory $parent = null)
     {
-        $this->fileSystem = $fs;
-        $this->name = $name;
-        $this->parent = $parent;
+        parent::__construct($fs, $name, $parent);
+
         $this->children = array();
-        
-        if($parent !== null)
-        {
-            $parent->attach($this);
-        }
-    }
-    
-    public function getPath()
-    {
-        $basePath = '';
-        if($this->parent instanceof Directory)
-        {
-            $basePath = $this->parent->getPath() . DIRECTORY_SEPARATOR;
-        }
-        return rtrim($basePath . $this->name, DIRECTORY_SEPARATOR);
-    }
-    
-    public function getName()
-    {
-        return $this->name;
     }
     
     public function read()
@@ -103,15 +78,5 @@ class Directory implements \Khameleon\Directory
         {
             $this->parent->detach($this);
         }
-    }
-    
-    public function remove()
-    {
-        $this->fileSystem->remove($this);
-    }
-    
-    public function recursiveRemove()
-    {
-        $this->fileSystem->recursiveRemove($this);
     }
 }
