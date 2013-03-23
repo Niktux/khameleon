@@ -110,8 +110,8 @@ class Directory implements \Khameleon\Directory
         $this->fileSystem->remove($this->getPath());
     }
     
-    public function removeDirectory()
+    public function recursiveRemove()
     {
-        $this->fileSystem->removeDirectory($this->getPath());
+        $this->fileSystem->recursiveRemove($this->getPath());
     }
 }

@@ -143,9 +143,9 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $this->dir->remove();
     }
     
-    public function testRemoveDirectory()
+    public function testRecursiveRemove()
     {
-        $this->dir->removeDirectory();
+        $this->dir->recursiveRemove();
         
         $deletedPaths = array(
             'dir',

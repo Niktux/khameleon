@@ -330,7 +330,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(function ($fs, $path){$fs->remove($path); }),
-            array(function ($fs, $path){$fs->removeDirectory($path); }),
+            array(function ($fs, $path){$fs->recursiveRemove($path); }),
         );
     }
     
@@ -472,15 +472,15 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
      */
-    public function testRemoveDirectoryOnFile()
+    public function testRecursiveRemoveOnFile()
     {
         $path = 'path/to/new/file';
         $this->fs->createFile($path);
         
-        $this->fs->removeDirectory($path);
+        $this->fs->recursiveRemove($path);
     }
     
-    public function testRemoveDirectory()
+    public function testRecursiveRemove()
     {
         $fs = new \Khameleon\Memory\FileSystem('/');
         $fs->createDirectory('one/two/three/four')
@@ -493,7 +493,7 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($fs->exists('one/two/three'));
         $this->assertTrue($fs->exists('one/two/three/four'));
         
-        $fs->removeDirectory('one/two');
+        $fs->recursiveRemove('one/two');
         
         $this->assertFalse($fs->exists($p = 'one/two'),            "$p should not exist anymore");
         $this->assertFalse($fs->exists($p = 'one/two/three'),      "$p should not exist anymore");

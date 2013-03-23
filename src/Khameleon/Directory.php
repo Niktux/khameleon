@@ -29,5 +29,5 @@ interface Directory extends Node, \Countable
     /**
      * Recursive remove
      */
-    public function removeDirectory();
+    public function recursiveRemove();
 }

@@ -213,7 +213,7 @@ class FileSystem implements \Khameleon\FileSystem
         $node->detachFromParent();
     }
     
-    public function removeDirectory($path)
+    public function recursiveRemove($path)
     {
         $absolutePath = $this->getAbsolutePath($path);
         $node = $this->fetchNodeForRemoval($absolutePath);
@@ -227,7 +227,7 @@ class FileSystem implements \Khameleon\FileSystem
         {
             if($child instanceof Directory)
             {
-                $this->removeDirectory($child->getPath());
+                $this->recursiveRemove($child->getPath());
             }
             else
             {
