@@ -2,6 +2,8 @@
 
 namespace Khameleon\Memory;
 
+use Khameleon\Exceptions\InvalidPathException;
+
 use Khameleon\Exceptions\RemovalException;
 use Khameleon\Exceptions\WrongNodeTypeException;
 use Khameleon\Exceptions\AlreadyExistingNodeException;
@@ -226,5 +228,34 @@ class FileSystem implements \Khameleon\FileSystem
         }
         
         $this->unregisterNode($node);
+    }
+    
+    public function isPathValid($path, $mustBeRelative = false)
+    {
+        if(is_string($path))
+        {
+            $path = rtrim($path, DIRECTORY_SEPARATOR);
+            
+            if(! empty($path) && preg_match('~^[\w-\s:\.\"' . DIRECTORY_SEPARATOR . ']*$~', $path))
+            {
+                if(($mustBeRelative && $this->isAbsolute($path)) === false)
+                {
+                    try
+                    {
+                        // looking for redundant DIRECTORY_SEPARATOR
+                        return (stripos(
+                            $this->getAbsolutePath($path),
+                            str_repeat(DIRECTORY_SEPARATOR, 2)
+                        ) === false);
+                    }
+                    catch(InvalidMountingPointException $e)
+                    {
+                        // invalid path
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
 }

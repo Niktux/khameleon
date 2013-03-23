@@ -75,5 +75,12 @@ interface FileSystem
     */
     public function recursiveRemove($input);
     
+    /**
+     * Validates path string
+     *
+     * @returns boolean
+     */
+    public function isPathValid($path, $mustBeRelative = false);
+    
     //public function mount($path, Directory $subroot);
 }

@@ -547,4 +547,87 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         return $datas;
     }
     
+    /**
+     * @dataProvider providerTestValidatePath
+     */
+    public function testValidatePath($path, $mustBeRelative, $expected)
+    {
+        $this->assertSame($expected, $this->fs->isPathValid($path, $mustBeRelative));
+    }
+    
+    public function providerTestValidatePath()
+    {
+        return array(
+
+            // *** VALID CASES ***
+            // nominal cases
+            array(self::ROOT_DIR, false, true),
+            array('toto', true, true),
+            array('toto', false, true),
+            array(self::ROOT_DIR . 'toto', false, true),
+            array('path/to', true, true),
+            array('path/to', false, true),
+            array(self::ROOT_DIR . 'path/to', false, true),
+            array('p/a/t/h', true, true),
+            array('p/a/t/h', false, true),
+            array(self::ROOT_DIR . 'p/a/t/h', false, true),
+            array(' ', false, true),
+            array(' ', true, true),
+            array('      ', true, true),
+            array('      ', false, true),
+                           
+            // edge characters
+            array('hash/0/1/2/3/4/56/789', true, true),
+            array('hash/0/1/2/3/4/56/789', false, true),
+            array(self::ROOT_DIR . 'hash/0/1/2/3/4/56/789', false, true),
+            array('./path/../to/item', true, true),
+            array('./path/../to/item', false, true),
+            array('c:/path/to/word with blanks', true, true),
+            array('c:/path/to/word with blanks', false, true),
+            array('path/to/word with blanks', true, true),
+            array('path/to/word with blanks', false, true),
+                
+            // *** INVALID CASES ***
+            // wrong datatypes
+            array(true, true, false),
+            array(true, false, false),
+            array(false, true, false),
+            array(false, false, false),
+            array(null, true, false),
+            array(null, false, false),
+            array(0, true, false),
+            array(0, false, false),
+            array(-51, true, false),
+            array(-51, false, false),
+            array(array(), true, false),
+            array(array(), false, false),
+            array(array('path/to'), true, false),
+            array(array('path/to'), false, false),
+            array(array(self::ROOT_DIR), true, false),
+            array(array(self::ROOT_DIR), false, false),
+            array(new \StdClass, true, false),
+            array(new \StdClass, false, false),
+            array(function (){}, true, false),
+            array(function (){}, false, false),
+            
+            // more separators than needed
+            array('path//to/file', true, false),
+            array('path//to/file', false, false),
+            array('path///to/file', true, false),
+            array('path///to/file', false, false),
+            array('path////to/file', true, false),
+            array('path////to/file', false, false),
+            
+            // root and absolute issues
+            array('/bad/root', true, false),
+            array('/bad/root', false, false),
+            array('', true, false),
+            array('', false, false),
+            array('/', true, false),
+            array('/', false, false),
+            array(self::ROOT_DIR . 'path/to', true, false),
+            array(self::ROOT_DIR, true, false),
+            array('/root', false, false),
+            );
+    }
 }
