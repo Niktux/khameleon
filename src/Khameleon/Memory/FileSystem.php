@@ -2,6 +2,12 @@
 
 namespace Khameleon\Memory;
 
+use Khameleon\Exceptions\RemovalException;
+use Khameleon\Exceptions\WrongNodeTypeException;
+use Khameleon\Exceptions\AlreadyExistingNodeException;
+use Khameleon\Exceptions\NodeNotFoundException;
+use Khameleon\Exceptions\InvalidMountingPointException;
+
 class FileSystem implements \Khameleon\FileSystem
 {
     private
@@ -30,7 +36,7 @@ class FileSystem implements \Khameleon\FileSystem
         
         if($node === null)
         {
-            throw new \Khameleon\Exceptions\NodeNotFoundException("$path does not exist");
+            throw new NodeNotFoundException("$path does not exist");
         }
         
         return $node;
@@ -56,7 +62,7 @@ class FileSystem implements \Khameleon\FileSystem
     
     /**
      * @param string $path
-     * @throws \Khameleon\Exceptions\Exception
+     * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     private function checkMountingPointIsCorrect($path)
     {
@@ -64,7 +70,7 @@ class FileSystem implements \Khameleon\FileSystem
         
         if(stripos($path, $rootPath) !== 0)
         {
-            throw new \Khameleon\Exceptions\InvalidMountingPointException("$path does not belong to this filesystem ($rootPath)");
+            throw new InvalidMountingPointException("$path does not belong to this filesystem ($rootPath)");
         }
     }
     
@@ -94,7 +100,7 @@ class FileSystem implements \Khameleon\FileSystem
         {
             if($node !== null)
             {
-                throw new \Khameleon\Exceptions\WrongNodeTypeException($node, "$path already exists and is not a file");
+                throw new WrongNodeTypeException($node, "$path already exists and is not a file");
             }
             
             $node = $this->instantiateFile($path);
@@ -121,7 +127,7 @@ class FileSystem implements \Khameleon\FileSystem
         {
             if($node !== null)
             {
-                throw new \Khameleon\Exceptions\WrongNodeTypeException($node, "$path already exists and is not a directory");
+                throw new WrongNodeTypeException($node, "$path already exists and is not a directory");
             }
         
             $node = $this->instantiateDirectory($path);
@@ -150,7 +156,7 @@ class FileSystem implements \Khameleon\FileSystem
     {
         if($this->exists($path))
         {
-            throw new \Khameleon\Exceptions\AlreadyExistingNodeException($path);
+            throw new AlreadyExistingNodeException($path);
         }
         
         $file = $this->putFile($path);
@@ -163,7 +169,7 @@ class FileSystem implements \Khameleon\FileSystem
     {
         if($this->exists($path))
         {
-            throw new \Khameleon\Exceptions\AlreadyExistingNodeException($path);
+            throw new AlreadyExistingNodeException($path);
         }
         
         $this->putDirectory($path);
@@ -178,17 +184,17 @@ class FileSystem implements \Khameleon\FileSystem
         
         if($node === null)
         {
-            throw new \Khameleon\Exceptions\NodeNotFoundException("$absolutePath does not exist");
+            throw new NodeNotFoundException("$absolutePath does not exist");
         }
         
         if($node instanceof \Khameleon\Directory && count($node) !== 0)
         {
-            throw new \Khameleon\Exceptions\RemovalException("$absolutePath is not an empty directory");
+            throw new RemovalException("$absolutePath is not an empty directory");
         }
         
         if($node === $this->root)
         {
-            throw new \Khameleon\Exceptions\RemovalException("Cannot remove root");
+            throw new RemovalException("Cannot remove root");
         }
         
         unset($this->nodes[$absolutePath]);

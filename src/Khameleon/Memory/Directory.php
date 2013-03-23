@@ -2,6 +2,7 @@
 
 namespace Khameleon\Memory;
 
+use Khameleon\Node;
 use Khameleon\Exceptions\NodeNotFoundException;
 
 class Directory implements \Khameleon\Directory
@@ -55,12 +56,12 @@ class Directory implements \Khameleon\Directory
         throw new NodeNotFoundException("$name does not exist in " . $this->getPath());
     }
     
-    public function attach(\Khameleon\Node $node)
+    public function attach(Node $node)
     {
         $this->children[$node->getName()] = $node;
     }
     
-    public function detach(\Khameleon\Node $node)
+    public function detach(Node $node)
     {
         $name = $node->getName();
         
