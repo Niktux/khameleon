@@ -216,4 +216,87 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
             array('some/empty/dir', true),
         );
     }
+    
+    /**
+     * @dataProvider providerTestPutFileAndDirectory
+     */
+    public function testPutFileAndDirectory($relativePath, $expectedAbsolutePath, $file = true)
+    {
+        $dir = $this->fs->get('dir/subdir');
+        
+        $this->assertFalse($this->fs->exists($expectedAbsolutePath), "$expectedAbsolutePath should not still exist");
+        if($file === true)
+        {
+            $node = $dir->putFile($relativePath);
+            $nodeType = '\Khameleon\File';
+        }
+        else
+        {
+            $node = $dir->putDirectory($relativePath);
+            $nodeType = '\Khameleon\Directory';
+        }
+        
+        $this->assertTrue($this->fs->exists($expectedAbsolutePath), "$expectedAbsolutePath should exist");
+        $this->assertInstanceOf($nodeType, $node);
+        $this->assertSame(basename($relativePath), $node->getName());
+        $this->assertSame($expectedAbsolutePath, $node->getPath());
+        $this->assertContains($node, $dir->recursiveRead());
+    }
+    
+    public function providerTestPutFileAndDirectory()
+    {
+        return array(
+            array('newfile', '/dir/subdir/newfile', true),
+            array('newfile/', '/dir/subdir/newfile', true),
+            array('folder/file', '/dir/subdir/folder/file', true),
+            array('folder/file/', '/dir/subdir/folder/file', true),
+            array('d/i/r/file', '/dir/subdir/d/i/r/file', true),
+            array('d/i/r/file/', '/dir/subdir/d/i/r/file', true),
+            array('dir/subdir', '/dir/subdir/dir/subdir', true),
+            array('dir/subdir/file', '/dir/subdir/dir/subdir/file', true),
+        );
+    }
+    
+    /**
+     * @dataProvider providerTestPutMethodsError
+     * @expectedException \Khameleon\Exceptions\InvalidPathException
+     */
+    public function testPutMethodsError($method, $relativeName)
+    {
+        $this->dir->$method($relativeName);
+    }
+    
+    public function providerTestPutMethodsError()
+    {
+        $inputs = array(
+            array(''),
+            array('/'),
+            array(null),
+            array(true),
+            array(false),
+            array('/dir'),
+            array('/dir/sub/deep'),
+            array(-13),
+            array(0),
+            array(42),
+            array('/\d+$/'),
+            array(array('newfile')),
+            array(array()),
+            array(new \StdClass),
+            array(new \Khameleon\Memory\Directory(new \Khameleon\Memory\FileSystem, 'toto')),
+        );
+        
+        $methods = array('putFile', 'putDirectory');
+        
+        $datas = array();
+        foreach($methods as $method)
+        {
+            foreach($inputs as $relativeName)
+            {
+                $datas[] = array($method, $relativeName);
+            }
+        }
+        
+        return $datas;
+    }
 }

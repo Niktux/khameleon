@@ -25,4 +25,20 @@ interface Directory extends Node, \Countable
      * @returns boolean
      */
     public function isEmpty();
+    
+    /**
+     * @param string $path
+     * @return \Khameleon\File
+     * @throws \Khameleon\Exceptions\WrongNodeTypeException
+     * @throws \Khameleon\Exceptions\InvalidMountingPointException
+     */
+    public function putFile($relativePath);
+    
+    /**
+     * @param string $path
+     * @return \Khameleon\Directory
+     * @throws \Khameleon\Exceptions\WrongNodeTypeException
+     * @throws \Khameleon\Exceptions\InvalidMountingPointException
+     */
+    public function putDirectory($relativePath);
 }

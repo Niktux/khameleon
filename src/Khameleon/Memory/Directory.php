@@ -2,6 +2,7 @@
 
 namespace Khameleon\Memory;
 
+use Khameleon\Exceptions\InvalidPathException;
 use Khameleon\Exceptions\NodeNotFoundException;
 
 class Directory extends Node implements \Khameleon\Directory
@@ -78,5 +79,29 @@ class Directory extends Node implements \Khameleon\Directory
         {
             $this->parent->detach($this);
         }
+    }
+    
+    public function putFile($relativePath)
+    {
+        $absolutePath = $this->convertRelativePathToAbsolute($relativePath);
+        
+        return $this->fileSystem->putFile($absolutePath);
+    }
+    
+    public function putDirectory($relativePath)
+    {
+        $absolutePath = $this->convertRelativePathToAbsolute($relativePath);
+        
+        return $this->fileSystem->putDirectory($absolutePath);
+    }
+    
+    private function convertRelativePathToAbsolute($relativePath)
+    {
+        if($this->fileSystem->isPathValid($relativePath, true) === false)
+        {
+            throw new InvalidPathException(is_string($relativePath) ? $relativePath : null);
+        }
+        
+        return $this->getPath() . DIRECTORY_SEPARATOR . rtrim($relativePath);
     }
 }
