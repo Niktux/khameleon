@@ -8,4 +8,12 @@ interface Node
     public function getName();
     public function remove();
     public function recursiveRemove();
+    
+    /**
+     * Rename node
+     *
+     * @param string $newName path are not allowed (use move instead)
+     * @throws \Khameleon\Exceptions\InvalidNameException
+     */
+    public function rename($newName);
 }

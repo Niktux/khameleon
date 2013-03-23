@@ -258,4 +258,17 @@ class FileSystem implements \Khameleon\FileSystem
         
         return false;
     }
+    
+    public function updateReference(Node $node)
+    {
+        $oldKey = array_search($node, $this->nodes);
+        
+        if(isset($this->nodes[$oldKey]))
+        {
+            unset($this->nodes[$oldKey]);
+        }
+        
+        $absolutePath = $this->getAbsolutePath($node->getPath());
+        $this->nodes[$absolutePath] = $node;
+    }
 }
