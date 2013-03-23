@@ -46,6 +46,22 @@ class Directory implements \Khameleon\Directory
         return new \ArrayIterator($this->children);
     }
     
+    public function recursiveRead()
+    {
+        $allChildren = new \AppendIterator();
+        $allChildren->append($this->read());
+        
+        foreach($this->children as $child)
+        {
+            if($child instanceof Directory)
+            {
+                $allChildren->append($child->recursiveRead());
+            }
+        }
+        
+        return $allChildren;
+    }
+    
     public function get($name)
     {
         if(isset($this->children[$name]))

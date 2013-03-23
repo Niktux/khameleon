@@ -7,6 +7,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
     private
         $otherFile,
         $files,
+        $deeperFile,
         $dir,
         $fs;
     
@@ -19,17 +20,33 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $this->files[] = $this->fs->putFile('dir/conf.ini');
         $this->files[] = $this->fs->putFile('dir/content.cache');
         $this->otherFile = $this->fs->putFile('otherdir/content.cache');
+        $this->deeperFile = $this->fs->putFile('dir/subdir/file');
         
-        $this->fs->createDirectory('some/empty/dir');
+        $this->fs
+            ->createFile('dir/subdir/deeperDir/file1')
+            ->createFile('dir/subdir/deeperDir/file2')
+            ->createDirectory('some/empty/dir');
         
         $this->dir = $this->fs->get('dir');
         $this->assertInstanceOf('\Khameleon\Directory', $this->dir);
     }
     
-    public function testRead()
+    /**
+     * @dataProvider providerTestRead
+     */
+    public function testRead($recursive, $nbExpectedElement)
     {
-        $it = $this->dir->read();
+        if($recursive === true)
+        {
+            $it = $this->dir->recursiveRead();
+        }
+        else
+        {
+            $it = $this->dir->read();
+        }
+        
         $this->assertInstanceOf('\Iterator', $it);
+        $this->assertEquals($nbExpectedElement, iterator_count($it));
         
         $children = iterator_to_array($it);
         foreach($this->files as $file)
@@ -37,7 +54,25 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
             $this->assertContains($file, $children);
         }
         
+        if($recursive === true)
+        {
+            $this->assertContains($this->deeperFile, $children);
+        }
+        else
+        {
+            $this->assertNotContains($this->deeperFile, $children);
+        }
+           
         $this->assertNotContains($this->otherFile, $children);
+        $this->assertContains($this->fs->get('dir/subdir'), $children);
+    }
+    
+    public function providerTestRead()
+    {
+        return array(
+            array(true, 8),
+            array(false, 4),
+        );
     }
     
     public function testGet()
@@ -71,7 +106,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
             array('/', 3),
             array('', 3),
                 
-            array('dir', 3),
+            array('dir', 4),
             array('otherdir', 1),
                 
             array('/some/empty/dir', 0),

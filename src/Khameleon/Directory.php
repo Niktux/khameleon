@@ -10,6 +10,11 @@ interface Directory extends Node, \Countable
     public function read();
     
     /**
+     * @returns \Iterator
+     */
+    public function recursiveRead();
+    
+    /**
      * @param string $name
      * @returns \Khameleon\Node
      * @throws \Khameleon\Exceptions\Exception
