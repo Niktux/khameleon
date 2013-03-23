@@ -222,14 +222,7 @@ class FileSystem implements \Khameleon\FileSystem
         {
             foreach($node->read() as $child)
             {
-                if($child instanceof Directory)
-                {
-                    $this->recursiveRemove($child->getPath());
-                }
-                else
-                {
-                    $this->unregisterNode($child);
-                }
+                $child->recursiveRemove();
             }
         }
         
