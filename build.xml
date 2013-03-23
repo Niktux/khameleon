@@ -26,6 +26,7 @@
   <delete dir="${basedir}/build/coverage"/>
   <delete dir="${basedir}/build/logs"/>
   <delete dir="${basedir}/build/pdepend"/>
+  <delete dir="${basedir}/vendor"/>
  </target>
 
  <target name="prepare" depends="clean" description="Prepare for build">
@@ -36,6 +37,13 @@
   <mkdir dir="${basedir}/build/pdepend"/>
   <mkdir dir="${basedir}/build/phpdox"/>
  </target>
+    
+ <target name="composer" depends="prepare" description="Update dependencies">
+  <exec executable="php" dir="${basedir}">
+   <arg value="composer.phar" />
+   <arg value="install" />
+   <arg path="--dev" />
+  </exec>
 
  <target name="lint" description="Perform syntax check of sourcecode files">
   <apply executable="php" failonerror="true">
@@ -119,7 +127,13 @@
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
-  <exec executable="phpunit" failonerror="true"/>
+  <exec executable="vendor/bin/phpunit" dir="${basedir}" failonerror="true">
+   <arg value="-c" />
+   <arg path="${basedir}/phpunit.dist.xml" />
+   <arg value="--coverage-html" />
+   <arg path="${basedir}/build/coverage" />
+   <arg value="tests" />
+  </exec>
  </target>
 
  <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
