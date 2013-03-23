@@ -181,6 +181,7 @@ class FileSystem implements \Khameleon\FileSystem
     {
         $absolutePath = $this->getAbsolutePath($path);
         $node = $this->fetchNodeForRemoval($absolutePath);
+        $this->checkRemovalPreconditions($node);
         
         if($node instanceof \Khameleon\Directory && $node->isEmpty() !== true)
         {
@@ -199,12 +200,15 @@ class FileSystem implements \Khameleon\FileSystem
             throw new NodeNotFoundException("$absolutePath does not exist");
         }
         
+        return $node;
+    }
+    
+    private function checkRemovalPreconditions(\Khameleon\Node $node)
+    {
         if($node === $this->root)
         {
             throw new RemovalException("Cannot remove root");
         }
-        
-        return $node;
     }
     
     private function unregisterNode(\Khameleon\Node $node)
@@ -213,11 +217,17 @@ class FileSystem implements \Khameleon\FileSystem
         $node->detachFromParent();
     }
     
-    public function recursiveRemove($path)
+    public function recursiveRemove($input)
     {
-        $absolutePath = $this->getAbsolutePath($path);
-        $node = $this->fetchNodeForRemoval($absolutePath);
+        if(! $input instanceof \Khameleon\Node)
+        {
+            $absolutePath = $this->getAbsolutePath($input);
+            $input = $this->fetchNodeForRemoval($absolutePath);
+        }
         
+        $node = $input;
+        
+        $this->checkRemovalPreconditions($node);
         if($node instanceof Directory)
         {
             foreach($node->read() as $child)

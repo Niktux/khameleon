@@ -54,6 +54,6 @@ class File implements \Khameleon\File
 
     public function recursiveRemove()
     {
-        $this->fileSystem->recursiveRemove($this->getPath());
+        $this->fileSystem->recursiveRemove($this);
     }
 }

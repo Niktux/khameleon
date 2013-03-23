@@ -112,6 +112,6 @@ class Directory implements \Khameleon\Directory
     
     public function recursiveRemove()
     {
-        $this->fileSystem->recursiveRemove($this->getPath());
+        $this->fileSystem->recursiveRemove($this);
     }
 }
