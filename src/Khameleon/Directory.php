@@ -25,4 +25,9 @@ interface Directory extends Node, \Countable
      * @returns boolean
      */
     public function isEmpty();
+    
+    /**
+     * Recursive remove
+     */
+    public function removeDirectory();
 }
