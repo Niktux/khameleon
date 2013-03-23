@@ -180,6 +180,18 @@ class FileSystem implements \Khameleon\FileSystem
     public function remove($path)
     {
         $absolutePath = $this->getAbsolutePath($path);
+        $node = $this->fetchNodeForRemoval($absolutePath);
+        
+        if($node instanceof \Khameleon\Directory && $node->isEmpty() !== true)
+        {
+            throw new RemovalException("$absolutePath is not an empty directory");
+        }
+        
+        $this->unregisterNode($node);
+    }
+    
+    private function fetchNodeForRemoval($absolutePath)
+    {
         $node = $this->fetchNode($absolutePath);
         
         if($node === null)
@@ -187,22 +199,42 @@ class FileSystem implements \Khameleon\FileSystem
             throw new NodeNotFoundException("$absolutePath does not exist");
         }
         
-        if($node instanceof \Khameleon\Directory && $node->isEmpty() !== true)
-        {
-            throw new RemovalException("$absolutePath is not an empty directory");
-        }
-        
         if($node === $this->root)
         {
             throw new RemovalException("Cannot remove root");
         }
         
-        unset($this->nodes[$absolutePath]);
+        return $node;
+    }
+    
+    private function unregisterNode(\Khameleon\Node $node)
+    {
+        unset($this->nodes[$node->getPath()]);
         $node->detachFromParent();
     }
     
     public function removeDirectory($path)
     {
-        throw new \Exception('Not implemented yet (waiting for unit test writing)');
+        $absolutePath = $this->getAbsolutePath($path);
+        $node = $this->fetchNodeForRemoval($absolutePath);
+        
+        if(! $node instanceof \Khameleon\Directory)
+        {
+            throw new WrongNodeTypeException($node, "$path is not a directory");
+        }
+        
+        foreach($node->read() as $child)
+        {
+            if($child instanceof Directory)
+            {
+                $this->removeDirectory($child->getPath());
+            }
+            else
+            {
+                $this->unregisterNode($child);
+            }
+        }
+        
+        $this->unregisterNode($node);
     }
 }

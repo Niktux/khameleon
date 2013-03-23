@@ -136,6 +136,46 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @expectedException \Khameleon\Exceptions\RemovalException
+     */
+    public function testTryToRemoveNotEmptyDirectory()
+    {
+        $this->dir->remove();
+    }
+    
+    public function testRemoveDirectory()
+    {
+        $this->dir->removeDirectory();
+        
+        $deletedPaths = array(
+            'dir',
+            'dir/readme.txt',
+            'dir/conf.ini',
+            'dir/content.cache',
+            'dir/subdir',
+            'dir/subdir/file',
+            'dir/subdir/deeperDir',
+            'dir/subdir/deeperDir/file1',
+            'dir/subdir/deeperDir/file2',
+        );
+        
+        $existingPaths = array(
+            'otherdir/content.cache',
+            'some/empty/dir'
+        );
+        
+        foreach($deletedPaths as $path)
+        {
+            $this->assertFalse($this->fs->exists($path), "$path should not exist anymore");
+        }
+        
+        foreach($existingPaths as $path)
+        {
+            $this->assertTrue($this->fs->exists($path), "$path should still exist");
+        }
+    }
+    
+    /**
      * @dataProvider providerTestEmpty
      */
     public function testEmpty($path, $expected)

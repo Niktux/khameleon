@@ -326,6 +326,14 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $this->fs->createDirectory($path);
     }
     
+    public function providerCommonRemoveTests()
+    {
+        return array(
+            array(function ($fs, $path){$fs->remove($path); }),
+            array(function ($fs, $path){$fs->removeDirectory($path); }),
+        );
+    }
+    
     public function testRemove()
     {
         $paths = array(
@@ -377,22 +385,28 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($dir2));
     }
     
-    public function testRemoveAllDirs()
+    /**
+     * @dataProvider providerCommonRemoveTests
+     */
+    public function testRemoveAllDirs(\Closure $removeMethod)
     {
         $fs = new \Khameleon\Memory\FileSystem('/');
         $dir = $fs->putDirectory('one/two/three/four');
         $this->assertEquals(0, count($dir));
         
-        $fs->remove($p = 'one/two/three/four');
+        $removeMethod($fs, $p = 'one/two/three/four');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('one/two/three'));
-        $fs->remove($p = 'one/two/three');
+        
+        $removeMethod($fs, $p = 'one/two/three');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('one/two'));
-        $fs->remove($p = 'one/two');
+        
+        $removeMethod($fs, $p = 'one/two');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('one'));
-        $fs->remove($p = 'one');
+        
+        $removeMethod($fs, $p = 'one');
         $this->assertFalse($fs->exists($p), "$p has not been removed");
         $this->assertTrue($fs->exists('/'));
     }
@@ -430,11 +444,12 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @dataProvider providerCommonRemoveTests
      * @expectedException \Khameleon\Exceptions\RemovalException
      */
-    public function testCannotRemoveRoot()
+    public function testCannotRemoveRoot(\Closure $removeMethod)
     {
-       $this->fs->remove(self::ROOT_DIR);
+       $removeMethod($this->fs, self::ROOT_DIR);
     }
     
     /**
@@ -444,4 +459,50 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     {
         $this->fs->remove('i/have/never/existed');
     }
+    
+    /**
+     * @dataProvider providerCommonRemoveTests
+     * @expectedException \Khameleon\Exceptions\NodeNotFoundException
+     */
+    public function testTryToRemoveNotExistingDirectory(\Closure $removeMethod)
+    {
+        $removeMethod($this->fs, 'i/have/never/existed');
+    }
+
+    /**
+     * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
+     */
+    public function testRemoveDirectoryOnFile()
+    {
+        $path = 'path/to/new/file';
+        $this->fs->createFile($path);
+        
+        $this->fs->removeDirectory($path);
+    }
+    
+    public function testRemoveDirectory()
+    {
+        $fs = new \Khameleon\Memory\FileSystem('/');
+        $fs->createDirectory('one/two/three/four')
+           ->createDirectory('one/two/three/five')
+           ->createFile('one/two/three/file')
+           ->createDirectory('one/two/third');
+        
+        $this->assertFalse($fs->get('one/two')->isEmpty());
+        $this->assertTrue($fs->exists('one/two'));
+        $this->assertTrue($fs->exists('one/two/three'));
+        $this->assertTrue($fs->exists('one/two/three/four'));
+        
+        $fs->removeDirectory('one/two');
+        
+        $this->assertFalse($fs->exists($p = 'one/two'),            "$p should not exist anymore");
+        $this->assertFalse($fs->exists($p = 'one/two/three'),      "$p should not exist anymore");
+        $this->assertFalse($fs->exists($p = 'one/two/three/four'), "$p should not exist anymore");
+        $this->assertFalse($fs->exists($p = 'one/two/three/five'), "$p should not exist anymore");
+        $this->assertFalse($fs->exists($p = 'one/two/three/file'), "$p should not exist anymore");
+        $this->assertFalse($fs->exists($p = 'one/two/third'),      "$p should not exist anymore");
+        $this->assertTrue($fs->get($p = 'one')->isEmpty(), "$p should be empty");
+        $this->assertEmpty(iterator_to_array($fs->get($p = 'one')->recursiveRead()));
+    }
+    
 }
