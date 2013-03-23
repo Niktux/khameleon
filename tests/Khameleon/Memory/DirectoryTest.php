@@ -80,4 +80,23 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
             array('some', 1),
         );
     }
+    
+    public function testRemove()
+    {
+        $path = 'some/empty/dir';
+        $dir = $this->fs->get($path);
+        $parentDir = $this->fs->get(dirname($path));
+        $nbChildren = count($parentDir);
+        $children = iterator_to_array($parentDir->read());
+        
+        $this->assertTrue($this->fs->exists($path));
+        $this->assertContains($dir, $children);
+        
+        $dir->remove();
+
+        $this->assertFalse($this->fs->exists($path), "$path should not exist after remove()");
+        $this->assertEquals($nbChildren - 1, count($parentDir));
+        $children = iterator_to_array($parentDir->read());
+        $this->assertNotContains($dir, $children);
+    }
 }

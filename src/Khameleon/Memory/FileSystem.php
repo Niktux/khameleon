@@ -12,7 +12,7 @@ class FileSystem implements \Khameleon\FileSystem
     public function __construct($rootPath = '/')
     {
         $this->rootPath = $this->sanitizeRootPath($rootPath);
-        $this->root = new Directory($this->rootPath, null);
+        $this->root = new Directory($this, $this->rootPath, null);
         $this->nodes = array($this->rootPath => $this->root);
     }
     
@@ -38,6 +38,8 @@ class FileSystem implements \Khameleon\FileSystem
     
     private function getAbsolutePath($path)
     {
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        
         if($this->isAbsolute($path))
         {
             $this->checkMountingPointIsCorrect($path);
@@ -104,7 +106,7 @@ class FileSystem implements \Khameleon\FileSystem
     private function instantiateFile($absolutePath)
     {
         $directory = $this->putDirectory(dirname($absolutePath));
-        $file = new File(basename($absolutePath), $directory);
+        $file = new File($this, basename($absolutePath), $directory);
         $this->nodes[$absolutePath] = $file;
         
         return $file;
@@ -131,7 +133,7 @@ class FileSystem implements \Khameleon\FileSystem
     private function instantiateDirectory($absolutePath)
     {
         $parent = $this->putDirectory(dirname($absolutePath));
-        $dir = new Directory(basename($absolutePath), $parent);
+        $dir = new Directory($this, basename($absolutePath), $parent);
         $this->nodes[$absolutePath] = $dir;
         
         return $dir;
@@ -167,5 +169,34 @@ class FileSystem implements \Khameleon\FileSystem
         $this->putDirectory($path);
         
         return $this;
+    }
+    
+    public function remove($path)
+    {
+        $absolutePath = $this->getAbsolutePath($path);
+        $node = $this->fetchNode($absolutePath);
+        
+        if($node === null)
+        {
+            throw new \Khameleon\Exceptions\NodeNotFoundException("$absolutePath does not exist");
+        }
+        
+        if($node instanceof \Khameleon\Directory && count($node) !== 0)
+        {
+            throw new \Khameleon\Exceptions\RemovalException("$absolutePath is not an empty directory");
+        }
+        
+        if($node === $this->root)
+        {
+            throw new \Khameleon\Exceptions\RemovalException("Cannot remove root");
+        }
+        
+        unset($this->nodes[$absolutePath]);
+        $node->unlink();
+    }
+    
+    public function removeDirectory($path)
+    {
+        throw new \Exception('Not implemented yet (waiting for unit test writing)');
     }
 }

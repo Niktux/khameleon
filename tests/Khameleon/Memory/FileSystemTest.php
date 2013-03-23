@@ -29,6 +29,25 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($absolutePath, $fr->getPath());
         $this->assertSame($fileName, $fr->getName());
     }
+
+    /**
+     * @dataProvider providerTestGetRoot
+     */
+    public function testGetRoot($rootPath)
+    {
+        $fs = new \Khameleon\Memory\FileSystem($rootPath);
+        $root = $fs->get($rootPath);
+        
+        $this->assertEquals(rtrim($rootPath, DIRECTORY_SEPARATOR), $root->getPath());
+    }
+    
+    public function providerTestGetRoot()
+    {
+        return array(
+            array('/'),
+            array(self::ROOT_DIR),
+        );
+    }
     
     public function testGet()
     {
@@ -305,5 +324,124 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
         $path = 'path/to/c/file';
         $this->fs->putFile($path);
         $this->fs->createDirectory($path);
+    }
+    
+    public function testRemove()
+    {
+        $paths = array(
+            'file1'  => 'path/to/one/day/file',
+            'file2a' => 'path/to/other/file',
+            'file2b' => 'path/to/other/fileinsamedir',
+            'dir'    => 'path/to/some/empty/dir',
+        );
+        
+        $this->fs
+            ->createFile($paths['file1'])
+            ->createFile($paths['file2a'])
+            ->createFile($paths['file2b'])
+            ->createDirectory($paths['dir']);
+        
+        foreach($paths as $path)
+        {
+            $this->assertTrue($this->fs->exists($path), "Precondition : $path should exist");
+        }
+        
+        $dir2 = $this->fs->get(dirname($paths['file2a']));
+        
+        $this->fs->remove($p = $paths['file1']);
+        $this->assertFalse($this->fs->exists($p), "$p has not been removed");
+        $this->assertTrue($this->fs->exists(dirname($p)), dirname($p) . "should still exist");
+        $this->assertTrue($this->fs->exists($paths['file2a']));
+        $this->assertTrue($this->fs->exists($paths['file2b']));
+        $this->assertTrue($this->fs->exists($paths['dir']));
+        $this->assertEquals(2, count($dir2));
+        
+        $this->fs->remove($p = $paths['file2a']);
+        $this->assertFalse($this->fs->exists($p), "$p has not been removed");
+        $this->assertTrue($this->fs->exists(dirname($p)), dirname($p) . "should still exist");
+        $this->assertTrue($this->fs->exists($paths['file2b']));
+        $this->assertTrue($this->fs->exists($paths['dir']));
+        $this->assertEquals(1, count($dir2));
+        
+        $this->fs->remove($p = $paths['dir']);
+        $this->assertFalse($this->fs->exists($p), "$p has not been removed");
+        $this->assertTrue($this->fs->exists(dirname($p)), dirname($p) . "should still exist");
+        $this->assertTrue($this->fs->exists($paths['file2b']));
+        $this->assertEquals(1, count($dir2));
+        
+        $this->fs->remove($p = $paths['file2b']);
+        foreach($paths as $path)
+        {
+            $this->assertFalse($this->fs->exists($path));
+        }
+        $this->assertEquals(0, count($dir2));
+    }
+    
+    public function testRemoveAllDirs()
+    {
+        $fs = new \Khameleon\Memory\FileSystem('/');
+        $dir = $fs->putDirectory('one/two/three/four');
+        $this->assertEquals(0, count($dir));
+        
+        $fs->remove($p = 'one/two/three/four');
+        $this->assertFalse($fs->exists($p), "$p has not been removed");
+        $this->assertTrue($fs->exists('one/two/three'));
+        $fs->remove($p = 'one/two/three');
+        $this->assertFalse($fs->exists($p), "$p has not been removed");
+        $this->assertTrue($fs->exists('one/two'));
+        $fs->remove($p = 'one/two');
+        $this->assertFalse($fs->exists($p), "$p has not been removed");
+        $this->assertTrue($fs->exists('one'));
+        $fs->remove($p = 'one');
+        $this->assertFalse($fs->exists($p), "$p has not been removed");
+        $this->assertTrue($fs->exists('/'));
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\Exception
+     * @dataProvider providerTestTryToRemoveNotEMptyDir
+     */
+    public function testTryToRemoveNotEMptyDir($createFile, $pathToCreate, $pathToRemove)
+    {
+        if($createFile === true)
+        {
+            $this->fs->createFile($pathToCreate);
+        }
+        else
+        {
+            $this->fs->createDirectory($pathToCreate);
+        }
+        
+        $this->fs->remove($pathToRemove);
+    }
+    
+    public function providerTestTryToRemoveNotEMptyDir()
+    {
+        return array(
+            array(true, 'path/to/file', 'path/to'),
+            array(true, 'path/to/file', self::ROOT_DIR . 'path/to'),
+            array(true, 'path/to/file', 'path'),
+            array(true, 'path/to/file', self::ROOT_DIR . 'path'),
+            array(false, 'path/to/dir', 'path/to'),
+            array(false, 'path/to/dir', self::ROOT_DIR . 'path/to'),
+            array(false, 'path/to/dir', self::ROOT_DIR),
+            array(false, 'path/to/dir', '/'),
+        );
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\RemovalException
+     */
+    public function testCannotRemoveRoot()
+    {
+       $this->fs->remove(self::ROOT_DIR);
+    }
+    
+    /**
+     * @expectedException \Khameleon\Exceptions\NodeNotFoundException
+     */
+    public function testTryToRemoveNotExistingFile()
+    {
+        $this->fs->remove('i/have/never/existed');
     }
 }

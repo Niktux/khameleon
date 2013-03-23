@@ -5,16 +5,19 @@ namespace Khameleon\Memory;
 class File implements \Khameleon\File
 {
     private
-        $content,
+        $fileSystem,
         $name,
-        $parent;
+        $parent,
+        $content;
     
-    public function __construct($name, Directory $parent)
+    public function __construct(FileSystem $fs, $name, Directory $parent)
     {
+        $this->fileSystem = $fs;
         $this->name = $name;
         $this->parent = $parent;
-        $parent->attach($this);
         $this->content = null;
+        
+        $parent->attach($this);
     }
     
     public function getPath()
@@ -38,4 +41,15 @@ class File implements \Khameleon\File
         
         return $this;
     }
+    
+    public function unlink()
+    {
+        $this->parent->detach($this);
+    }
+
+    public function remove()
+    {
+        $this->fileSystem->remove($this->getPath());
+    }
+    
 }

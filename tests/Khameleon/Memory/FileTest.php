@@ -33,4 +33,23 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($content, $f->read(), "File <$path> should still contain the same content");
         $this->assertNotSame($content, $otherFile->read(), "Other file should contain another content");
     }
+    
+    public function testRemove()
+    {
+        $path = 'path/to/my/file';
+        
+        $file = $this->fs->putFile($path);
+        $dir = $this->fs->get(dirname($path));
+        
+        $nbChildren = count($dir);
+        $children = iterator_to_array($dir->read());
+        $this->assertContains($file, $children);
+        
+        $file->remove();
+        
+        $this->assertFalse($this->fs->exists($path), "$path should not exist after remove()");
+        $this->assertEquals($nbChildren - 1, count($dir));
+        $children = iterator_to_array($dir->read());
+        $this->assertNotContains($file, $children);
+    }
 }

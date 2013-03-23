@@ -5,15 +5,17 @@ namespace Khameleon\Memory;
 class Directory implements \Khameleon\Directory
 {
     private
-        $children,
+        $fileSystem,
         $name,
-        $parent;
+        $parent,
+        $children;
     
-    public function __construct($name, Directory $parent = null)
+    public function __construct(FileSystem $fs, $name, Directory $parent = null)
     {
-        $this->children = array();
+        $this->fileSystem = $fs;
         $this->name = $name;
         $this->parent = $parent;
+        $this->children = array();
         
         if($parent !== null)
         {
@@ -56,8 +58,31 @@ class Directory implements \Khameleon\Directory
         $this->children[$node->getName()] = $node;
     }
     
+    public function detach(\Khameleon\Node $node)
+    {
+        $name = $node->getName();
+        
+        if(isset($this->children[$name]))
+        {
+            unset($this->children[$name]);
+        }
+    }
+    
     public function count()
     {
         return count($this->children);
+    }
+    
+    public function unlink()
+    {
+        if($this->parent !== null)
+        {
+            $this->parent->detach($this);
+        }
+    }
+    
+    public function remove()
+    {
+        $this->fileSystem->remove($this->getPath());
     }
 }
