@@ -63,7 +63,7 @@ interface FileSystem
      * @throws \Khameleon\Exceptions\RemovalException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
-    public function remove($path);
+    public function remove($input);
     
     /**
      * Remove recursively a node
@@ -73,7 +73,7 @@ interface FileSystem
      * @throws \Khameleon\Exceptions\WrongNodeTypeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
     */
-    public function recursiveRemove($path);
+    public function recursiveRemove($input);
     
     //public function mount($path, Directory $subroot);
 }
