@@ -59,28 +59,20 @@ class MyClassTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $fs = new Khameleon\Memory\FileSystem();
-        $file = $fs->putFile('path/to/myfile');
-        $file->write('test data');
-        
+        $fs->createFile('/test/file1', 'content')
+           ->createFile('/test/file2', 'other test content')
+           ->createDirectory('/other/dir')
+           ->createFile('file3', 'still different content');        
+           
         $obj = new MyClass($fs);
     }
 }
-
-$obj = new MyClass(new Khameleon\Local\FileSystem());
 ```
 
 
 Development status
 ------------------
-This project is young : interfaces must be extended (unlink, recursive search, ... etc), other implementations must be done (local, ftp, db, memcache, ...), fluid interface like example below :
-```php
-$fs = new Khameleon\Memory\FileSystem();
-$fs->createFile('/test/file1', 'content')
-   ->createFile('/test/file2', 'other content')
-   ->createDirectory('/test')
-   ->createFile('file3', 'still different content');
-
-```
+This project is young : interfaces must be extended, other implementations must be done (local, ftp, db, memcache, ...), ... etc
 
 Quality
 -------
