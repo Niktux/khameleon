@@ -197,30 +197,6 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
-     */
-    public function testInvalidFile()
-    {
-        $path = 'subdir';
-        $d = $this->fs->putDirectory($path);
-        
-        $this->assertInstanceOf('\Khameleon\Directory', $d);
-        $this->fs->putFile($path);
-    }
-    
-    /**
-     * @expectedException \Khameleon\Exceptions\WrongNodeTypeException
-     */
-    public function testInvalidDirectory()
-    {
-        $path = 'myfile';
-        $f = $this->fs->putFile($path);
-    
-        $this->assertInstanceOf('\Khameleon\File', $f);
-        $this->fs->putDirectory($path);
-    }
-    
-    /**
      * @expectedException \Khameleon\Exceptions\Exception
      */
     public function testInvalidGet()
@@ -248,34 +224,36 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @dataProvider providerCreateFileMethod
      * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
      */
-    public function testCreateFileTwice()
+    public function testCreateFileTwice($createMethod)
     {
         $path = 'path/to/x/file';
-        $this->fs
-            ->createFile($path)
-            ->createFile($path);
+        $this->fs->$createMethod($path);
+        $this->fs->$createMethod($path);
     }
     
     /**
+     * @dataProvider providerCreateFileMethod
      * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
      */
-    public function testTryToCreateExistingFile()
+    public function testTryToCreateExistingFile($createMethod)
     {
         $path = 'path/to/y/file';
         $this->fs->putFile($path);
-        $this->fs->createFile($path);
+        $this->fs->$createMethod($path);
     }
     
     /**
+     * @dataProvider providerCreateFileMethod
      * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
      */
-    public function testTryToCreateFileOverExistingDirectoryPath()
+    public function testTryToCreateFileOverExistingDirectoryPath($createMethod)
     {
         $path = 'path/to/z/dir';
         $this->fs->putDirectory($path);
-        $this->fs->createFile($path);
+        $this->fs->$createMethod($path);
     }
         
     public function testCreateDirectory()
@@ -296,34 +274,52 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @dataProvider providerCreateDirectoryMethod
      * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
      */
-    public function testCreateDirectoryTwice()
+    public function testTryToCreateDirectoryTwice($createMethod)
     {
         $path = 'path/to/a/dir';
-        $this->fs
-            ->createDirectory($path)
-            ->createDirectory($path);
+        $this->fs->$createMethod($path);
+        $this->fs->$createMethod($path);
     }
     
     /**
+     * @dataProvider providerCreateDirectoryMethod
      * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
      */
-    public function testTryToCreateExistingDirectory()
+    public function testTryToCreateExistingDirectory($createMethod)
     {
         $path = 'path/to/b/dir';
-        $this->fs->putDirectory($path);
         $this->fs->createDirectory($path);
+        $this->fs->$createMethod($path);
     }
     
     /**
+     * @dataProvider providerCreateDirectoryMethod
      * @expectedException \Khameleon\Exceptions\AlreadyExistingNodeException
      */
-    public function testTryToCreateDirectoryOverExistingFilePath()
+    public function testTryToCreateDirectoryOverExistingFilePath($createMethod)
     {
         $path = 'path/to/c/file';
-        $this->fs->putFile($path);
-        $this->fs->createDirectory($path);
+        $this->fs->createFile($path);
+        $this->fs->$createMethod($path);
+    }
+    
+    public function providerCreateFileMethod()
+    {
+        return array(
+            array('createFile'),
+            array('putFile'),
+        );
+    }
+    
+    public function providerCreateDirectoryMethod()
+    {
+        return array(
+            array('createDirectory'),
+            array('putDirectory'),
+        );
     }
     
     public function providerRemoveMethod()

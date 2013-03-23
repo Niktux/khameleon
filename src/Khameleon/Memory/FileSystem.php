@@ -91,54 +91,71 @@ class FileSystem implements \Khameleon\FileSystem
         return $node;
     }
     
+    public function createFile($path, $content = null)
+    {
+        $file = $this->putFile($path);
+        $file->write($content);
+        
+        return $this;
+    }
+    
+    public function createDirectory($path)
+    {
+        $this->putDirectory($path);
+        
+        return $this;
+    }
+    
     public function putFile($path)
     {
-        $path = $this->getAbsolutePath($path);
-        $node = $this->fetchNode($path);
-        
-        if(! $node instanceof \Khameleon\File)
+        if($this->exists($path))
         {
-            if($node !== null)
-            {
-                throw new WrongNodeTypeException($node, "$path already exists and is not a file");
-            }
-            
-            $node = $this->instantiateFile($path);
+            throw new AlreadyExistingNodeException($path);
         }
         
-        return $node;
+        $path = $this->getAbsolutePath($path);
+        
+        return $this->instantiateFile($path);
+    }
+    
+    public function putDirectory($path)
+    {
+        if($this->exists($path))
+        {
+            throw new AlreadyExistingNodeException($path);
+        }
+        
+        $path = $this->getAbsolutePath($path);
+        
+        return $this->instantiateDirectory($path);
     }
     
     private function instantiateFile($absolutePath)
     {
-        $directory = $this->putDirectory(dirname($absolutePath));
-        $file = new File($this, basename($absolutePath), $directory);
+        $parentPath = dirname($absolutePath);
+        $parent = $this->fetchNode($parentPath);
+        
+        if($parent === null)
+        {
+            $parent = $this->instantiateDirectory($parentPath);
+        }
+        
+        $file = new File($this, basename($absolutePath), $parent);
         $this->nodes[$absolutePath] = $file;
         
         return $file;
     }
     
-    public function putDirectory($path)
-    {
-        $path = $this->getAbsolutePath($path);
-        $node = $this->fetchNode($path);
-        
-        if(! $node instanceof \Khameleon\Directory)
-        {
-            if($node !== null)
-            {
-                throw new WrongNodeTypeException($node, "$path already exists and is not a directory");
-            }
-        
-            $node = $this->instantiateDirectory($path);
-        }
-        
-        return $node;
-    }
-    
     private function instantiateDirectory($absolutePath)
     {
-        $parent = $this->putDirectory(dirname($absolutePath));
+        $parentPath = dirname($absolutePath);
+        $parent = $this->fetchNode($parentPath);
+        
+        if($parent === null)
+        {
+            $parent = $this->instantiateDirectory($parentPath);
+        }
+        
         $dir = new Directory($this, basename($absolutePath), $parent);
         $this->nodes[$absolutePath] = $dir;
         
@@ -150,31 +167,6 @@ class FileSystem implements \Khameleon\FileSystem
         $absolutePath = $this->getAbsolutePath($path);
         
         return isset($this->nodes[$absolutePath]);
-    }
-    
-    public function createFile($path, $content = null)
-    {
-        if($this->exists($path))
-        {
-            throw new AlreadyExistingNodeException($path);
-        }
-        
-        $file = $this->putFile($path);
-        $file->write($content);
-        
-        return $this;
-    }
-    
-    public function createDirectory($path)
-    {
-        if($this->exists($path))
-        {
-            throw new AlreadyExistingNodeException($path);
-        }
-        
-        $this->putDirectory($path);
-        
-        return $this;
     }
     
     public function remove($input)
