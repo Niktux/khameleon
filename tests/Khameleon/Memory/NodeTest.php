@@ -54,7 +54,6 @@ class NodeTest extends \PHPUnit_Framework_TestCase
             '   ',
             'toto',
             'name with blanks',
-            'file', // same name
             ' file',
             'file ',
             ' file ',
@@ -72,19 +71,22 @@ class NodeTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @dataProvider providerTestRenameError
-     * @expectedException \Khameleon\Exceptions\InvalidNameException
+     * @expectedException \Khameleon\Exceptions\Exception
      */
     public function testRenameError($newName)
     {
+        $this->fs->createFile('path/to/alreadyExisting');
         $this->fs->putFile('path/to/file')->rename($newName);
     }
     
     /**
      * @dataProvider providerTestRenameError
-     * @expectedException \Khameleon\Exceptions\InvalidNameException
+     * @expectedException \Khameleon\Exceptions\Exception
      */
     public function testRenameUsingFileSystemError($newName)
     {
+        $this->fs->createFile('path/to/alreadyExisting');
+        
         $path = 'path/to/file';
         $this->fs->createFile($path)->rename($path, $newName);
     }
@@ -102,6 +104,32 @@ class NodeTest extends \PHPUnit_Framework_TestCase
             array('/toto'),
             array(array()),
             array(new \StdClass),
+                
+            array('alreadyExisting'),
+            array('file'),
         );
+    }
+    
+    public function testRenameNameHasNotChangedIfError()
+    {
+        $path = 'path/to/';
+        $oldName ='old';
+        $newName = 'new';
+        
+        $file = $this->fs->createFile($path . $newName)->putFile($path . $oldName);
+        $errorTriggered = false;
+        
+        try
+        {
+            $file->rename($newName);
+        }
+        catch(\Khameleon\Exceptions\Exception $e)
+        {
+            $errorTriggered = true;
+        }
+        
+        $this->assertTrue($errorTriggered, 'An error must be occured');
+        $this->assertSame($oldName, $file->getName(), 'Name must not have been changed');
+        $this->assertSame('/path/to/old', $file->getPath(), 'Path must not have been changed');
     }
 }

@@ -142,7 +142,7 @@ class FileSystem implements \Khameleon\FileSystem
         }
         
         $file = new File($this, basename($absolutePath), $parent);
-        $this->nodes[$absolutePath] = $file;
+        $this->registerNode($file, $absolutePath);
         
         return $file;
     }
@@ -158,7 +158,7 @@ class FileSystem implements \Khameleon\FileSystem
         }
         
         $dir = new Directory($this, basename($absolutePath), $parent);
-        $this->nodes[$absolutePath] = $dir;
+        $this->registerNode($dir, $absolutePath);
         
         return $dir;
     }
@@ -210,7 +210,9 @@ class FileSystem implements \Khameleon\FileSystem
     
     private function unregisterNode(\Khameleon\Node $node)
     {
-        unset($this->nodes[$node->getPath()]);
+        $absolutePath = $this->getAbsolutePath($node->getPath());
+        unset($this->nodes[$absolutePath]);
+        
         $node->detachFromParent();
     }
     
@@ -261,19 +263,34 @@ class FileSystem implements \Khameleon\FileSystem
     public function updateReference(Node $node)
     {
         $oldKey = array_search($node, $this->nodes);
+
+        $this->registerNode($node);
         
         if(isset($this->nodes[$oldKey]))
         {
             unset($this->nodes[$oldKey]);
         }
-        
-        $absolutePath = $this->getAbsolutePath($node->getPath());
-        $this->nodes[$absolutePath] = $node;
     }
     
     public function rename($path, $newName)
     {
         $node = $this->get($path);
         $node->rename($newName);
+    }
+    
+    private function registerNode(\Khameleon\Node $node, $absolutePath = null)
+    {
+        if($absolutePath === null)
+        {
+            $absolutePath = $this->getAbsolutePath($node->getPath());
+        }
+        
+        if(isset($this->nodes[$absolutePath]))
+        {
+            throw new AlreadyExistingNodeException($absolutePath);
+        }
+        
+       // var_dump($node->getPath(), $node->getName(), $absolutePath);
+        $this->nodes[$absolutePath] = $node;
     }
 }

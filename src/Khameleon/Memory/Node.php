@@ -52,14 +52,18 @@ abstract class Node implements \Khameleon\Node
     
     public function rename($newName)
     {
-        if(is_string($newName)
-        && ! empty($newName)
+        if(is_string($newName) && ! empty($newName)
         && stripos($newName, DIRECTORY_SEPARATOR) === false)
         {
-            $this->name = $newName;
-            $this->fileSystem->updateReference($this);
+            $newPath = dirname($this->getPath()) . DIRECTORY_SEPARATOR . $newName;
             
-            return true;
+            if($this->fileSystem->exists($newPath) === false)
+            {
+                $this->name = $newName;
+                $this->fileSystem->updateReference($this);
+            
+                return true;
+            }
         }
         
         throw new InvalidNameException();
