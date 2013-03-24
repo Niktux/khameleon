@@ -27,7 +27,7 @@ interface Directory extends Node, \Countable
     public function isEmpty();
     
     /**
-     * @param string $path
+     * @param string $relativePath
      * @return \Khameleon\File
      * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
@@ -35,7 +35,7 @@ interface Directory extends Node, \Countable
     public function putFile($relativePath);
     
     /**
-     * @param string $path
+     * @param string $relativePath
      * @return \Khameleon\Directory
      * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
