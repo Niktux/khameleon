@@ -18,7 +18,6 @@
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>
   <mkdir dir="${basedir}/build/pdepend"/>
-  <mkdir dir="${basedir}/build/phpdox"/>
  </target>
     
  <target name="composer" description="Update dependencies">
@@ -94,7 +93,7 @@
   <arg value="--directory" />
   <arg path="${basedir}/src" />
   <arg value="--target" />
-  <arg path="${basedir}/build/phpdox/api" />
+  <arg path="${basedir}/build/api" />
   </exec>
  </target>
 
