@@ -30,9 +30,6 @@ class FileSystem implements \Khameleon\FileSystem
         return DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
     }
     
-    /**
-     * @inheritdoc
-     */
     public function get($path)
     {
         $absolutePath = $this->getAbsolutePath($path);
