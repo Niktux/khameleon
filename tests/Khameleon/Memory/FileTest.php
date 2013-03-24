@@ -63,4 +63,62 @@ class FileTest extends \PHPUnit_Framework_TestCase
             array('recursiveRemove')
         );
     }
+    
+    public function testGetTimeMethods()
+    {
+        $start = time();
+        $file = $this->fs->putFile('path/to/file');
+        
+        $ctime = $file->getCreationTime();
+        $mtime = $file->getModificationTime();
+        $atime = $file->getAccessTime();
+        
+        $this->assertGreaterThanOrEqual($start, $ctime, 'ctime #1');
+        $this->assertEquals($ctime, $mtime, 'mtime #1');
+        $this->assertEquals($ctime, $atime, 'atime #1');
+        
+        $file->write('some content');
+        
+        $ctime2 = $file->getCreationTime();
+        $mtime2 = $file->getModificationTime();
+        $atime2 = $file->getAccessTime();
+        
+        $this->assertEquals($ctime, $ctime2, 'ctime #2');
+        $this->assertGreaterThanOrEqual($mtime, $mtime2, 'mtime #2');
+        $this->assertGreaterThanOrEqual($atime, $atime2, 'atime #2');
+        
+        $file->read();
+        
+        $ctime3 = $file->getCreationTime();
+        $mtime3 = $file->getModificationTime();
+        $atime3 = $file->getAccessTime();
+        
+        $this->assertEquals($ctime, $ctime3, 'ctime #3');
+        $this->assertEquals($mtime2, $mtime3, 'mtime #3');
+        $this->assertGreaterThanOrEqual($atime2, $atime3, 'atime #3');
+        
+        sleep(1);
+        
+        $file->read();
+        
+        $ctime4 = $file->getCreationTime();
+        $mtime4 = $file->getModificationTime();
+        $atime4 = $file->getAccessTime();
+        
+        $this->assertEquals($ctime, $ctime4, 'ctime #4');
+        $this->assertEquals($mtime3, $mtime4, 'mtime #4');
+        $this->assertGreaterThan($atime3, $atime4, 'atime #4');
+
+        sleep(1);
+        
+        $file->write('other content');
+        
+        $ctime5 = $file->getCreationTime();
+        $mtime5 = $file->getModificationTime();
+        $atime5 = $file->getAccessTime();
+        
+        $this->assertEquals($ctime, $ctime5, 'ctime #5');
+        $this->assertGreaterThan($mtime4, $mtime5, 'mtime #5');
+        $this->assertGreaterThan($atime4, $atime5, 'atime #5');
+    }
 }
