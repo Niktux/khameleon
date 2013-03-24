@@ -290,7 +290,6 @@ class FileSystem implements \Khameleon\FileSystem
             throw new AlreadyExistingNodeException($absolutePath);
         }
         
-       // var_dump($node->getPath(), $node->getName(), $absolutePath);
         $this->nodes[$absolutePath] = $node;
     }
 }
