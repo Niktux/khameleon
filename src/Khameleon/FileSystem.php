@@ -2,9 +2,16 @@
 
 namespace Khameleon;
 
+/**
+ *
+ * @author Niktux
+ *
+ */
 interface FileSystem
 {
     /**
+     * Retrieve node from file system
+     *
      * @param string $path
      * @return \Khameleon\Node
      * @throws \Khameleon\Exceptions\NodeNotFoundException
@@ -13,6 +20,8 @@ interface FileSystem
     public function get($path);
     
     /**
+     * Create and returns a file
+     *
      * @param string $path
      * @return \Khameleon\File
      * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
@@ -21,6 +30,8 @@ interface FileSystem
     public function putFile($path);
     
     /**
+     * Create and returns a directory
+     *
      * @param string $path
      * @return \Khameleon\Directory
      * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
@@ -29,6 +40,8 @@ interface FileSystem
     public function putDirectory($path);
     
     /**
+     * Check if node exists
+     *
      * @param string $path
      * @return boolean
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
@@ -36,7 +49,7 @@ interface FileSystem
     public function exists($path);
     
     /**
-     * Fluid interface
+     * Create a file without returning it (fluid interface)
      *
      * @param string $path
      * @param string $content
@@ -47,7 +60,7 @@ interface FileSystem
     public function createFile($path, $content = null);
     
     /**
-     * Fluid interface
+     * Create a directory without returning it (fluid interface)
      *
      * @param string $path
      * @return \Khameleon\FileSystem
@@ -77,6 +90,8 @@ interface FileSystem
     /**
      * Validates path string
      *
+     * @param string $path
+     * @param boolean $mustBeRelative
      * @returns boolean
      */
     public function isPathValid($path, $mustBeRelative = false);
