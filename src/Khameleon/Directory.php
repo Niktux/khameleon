@@ -29,7 +29,7 @@ interface Directory extends Node, \Countable
     /**
      * @param string $path
      * @return \Khameleon\File
-     * @throws \Khameleon\Exceptions\WrongNodeTypeException
+     * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function putFile($relativePath);
@@ -37,7 +37,7 @@ interface Directory extends Node, \Countable
     /**
      * @param string $path
      * @return \Khameleon\Directory
-     * @throws \Khameleon\Exceptions\WrongNodeTypeException
+     * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function putDirectory($relativePath);

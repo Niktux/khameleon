@@ -5,7 +5,6 @@ namespace Khameleon\Memory;
 use Khameleon\Exceptions\InvalidPathException;
 
 use Khameleon\Exceptions\RemovalException;
-use Khameleon\Exceptions\WrongNodeTypeException;
 use Khameleon\Exceptions\AlreadyExistingNodeException;
 use Khameleon\Exceptions\NodeNotFoundException;
 use Khameleon\Exceptions\InvalidMountingPointException;

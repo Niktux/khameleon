@@ -15,7 +15,7 @@ interface FileSystem
     /**
      * @param string $path
      * @return \Khameleon\File
-     * @throws \Khameleon\Exceptions\WrongNodeTypeException
+     * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function putFile($path);
@@ -23,7 +23,7 @@ interface FileSystem
     /**
      * @param string $path
      * @return \Khameleon\Directory
-     * @throws \Khameleon\Exceptions\WrongNodeTypeException
+     * @throws \Khameleon\Exceptions\AlreadyExistingNodeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function putDirectory($path);
@@ -70,7 +70,6 @@ interface FileSystem
      *
      * @param string|\Khameleon\Node node to remove
      * @throws \Khameleon\Exceptions\RemovalException
-     * @throws \Khameleon\Exceptions\WrongNodeTypeException
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
     */
     public function recursiveRemove($input);
