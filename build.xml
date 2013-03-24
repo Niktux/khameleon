@@ -2,7 +2,7 @@
 
 <project name="Khameleon" default="build">
  <target name="build"
-   depends="prepare,composer,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+   depends="prepare,composer,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc,phpunit,phpcb"/>
 
  <target name="clean" description="Cleanup build artifacts">
   <delete dir="${basedir}/build/api"/>
@@ -89,8 +89,13 @@
   </exec>
  </target>
 
- <target name="phpdox" description="Generate API documentation using phpDox">
-  <exec executable="phpdox"/>
+ <target name="phpdoc" description="Generate API documentation using phpDocumentor2">
+  <exec executable="phpdoc" >
+  <arg value="--directory" />
+  <arg path="${basedir}/src" />
+  <arg value="--target" />
+  <arg path="${basedir}/build/phpdox/api" />
+  </exec>
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
