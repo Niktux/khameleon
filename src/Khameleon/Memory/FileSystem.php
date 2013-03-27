@@ -165,6 +165,11 @@ class FileSystem implements \Khameleon\FileSystem
     
     public function exists($path)
     {
+        if(! $this->isPathValid($path))
+        {
+            throw new InvalidPathException();
+        }
+        
         $absolutePath = $this->getAbsolutePath($path);
         
         return isset($this->nodes[$absolutePath]);
@@ -235,6 +240,11 @@ class FileSystem implements \Khameleon\FileSystem
     {
         if(is_string($path))
         {
+            if($path === $this->rootPath)
+            {
+                return true;
+            }
+            
             $path = rtrim($path, DIRECTORY_SEPARATOR);
             
             if(! empty($path) && preg_match('~^[\w-\s:\.\"' . DIRECTORY_SEPARATOR . ']*$~', $path))
@@ -292,4 +302,5 @@ class FileSystem implements \Khameleon\FileSystem
         
         $this->nodes[$absolutePath] = $node;
     }
+
 }

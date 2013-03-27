@@ -623,6 +623,13 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
             );
     }
     
+    public function testValidatePathSpecialCase()
+    {
+        $fs = new \Khameleon\Memory\FileSystem('/');
+        $this->assertTrue($fs->isPathValid('/', false), 'root / must be considered as valid');
+        $this->assertFalse($fs->isPathValid('//', false), 'path // must be considered as invalid');
+    }
+    
     /**
      * NOTICE : other tests are in NodeTest (shared test code & provider)
      *
