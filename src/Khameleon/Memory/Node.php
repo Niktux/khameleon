@@ -55,17 +55,22 @@ abstract class Node implements \Khameleon\Node
         if(is_string($newName) && ! empty($newName)
         && stripos($newName, DIRECTORY_SEPARATOR) === false)
         {
-            $newPath = dirname($this->getPath()) . DIRECTORY_SEPARATOR . $newName;
+            $newPath = rtrim(dirname($this->getPath()), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $newName;
             
             if($this->fileSystem->exists($newPath) === false)
             {
                 $this->name = $newName;
-                $this->fileSystem->updateReference($this);
+                $this->updatePath();
             
                 return true;
             }
         }
         
         throw new InvalidNameException();
+    }
+    
+    protected function updatePath()
+    {
+        $this->fileSystem->updateReference($this);
     }
 }

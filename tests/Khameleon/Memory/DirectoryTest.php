@@ -312,4 +312,32 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         
         return $datas;
     }
+    
+    public function testRename()
+    {
+        $paths = array(
+            'dir/readme.txt',
+            'dir/conf.ini',
+            'dir/content.cache',
+            'dir/subdir/file',
+            'dir/subdir/deeperDir/file1',
+            'dir/subdir/deeperDir/file2',
+        );
+        foreach($paths as $path)
+        {
+            $this->assertTrue($this->fs->exists($path));
+        }
+        
+        $this->dir->rename('newdir');
+        
+        foreach($paths as $path)
+        {
+            $this->assertFalse($this->fs->exists($path), "$path should not exist anymore");
+            $this->assertTrue($this->fs->exists($p = str_replace('dir/', 'newdir/', $path)), "$p should has been created");
+        }
+        
+        $readMeFile = reset($this->files);
+        $this->assertSame('readme.txt', $readMeFile->getName());
+        $this->assertSame('newdir/readme.txt', $readMeFile->getPath());
+    }
 }

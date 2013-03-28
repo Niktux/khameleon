@@ -104,4 +104,14 @@ class Directory extends Node implements \Khameleon\Directory
         
         return $this->getPath() . DIRECTORY_SEPARATOR . rtrim($relativePath, DIRECTORY_SEPARATOR);
     }
+    
+    protected function updatePath()
+    {
+        parent::updatePath();
+        
+        foreach($this->children as $child)
+        {
+            $child->updatePath();
+        }
+    }
 }
