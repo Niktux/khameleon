@@ -648,4 +648,42 @@ class FileSystemTest extends \PHPUnit_Framework_TestCase
             array('/invalid/root'),
         );
     }
+    
+    public function testToString()
+    {
+        $this->fs
+            ->createFile('dir/file1a')
+            ->createFile('dir/file1b')
+            ->createFile('dir/subdir/subfile')
+            ->createFile('dir2/file2')
+            ->createFile('rootfile1')
+            ->createFile('rootfile2');
+        
+        $out = (string) $this->fs;
+        
+        $expected = <<<FS
+/root/dir
+|---- dir
+|     |---- file1a
+|     |---- file1b
+|     |---- subdir
+|     |     |---- subfile
+|---- dir2
+|     |---- file2
+|---- rootfile1
+|---- rootfile2
+FS;
+        $this->assertSame($expected, $out);
+        
+        $out = $this->fs->get('dir')->prettyPrint();
+        
+        $expected = <<<FS
+dir
+|---- file1a
+|---- file1b
+|---- subdir
+|     |---- subfile
+FS;
+        $this->assertSame($expected, $out);
+    }
 }

@@ -11,6 +11,10 @@ use Khameleon\Exceptions\InvalidMountingPointException;
 
 class FileSystem implements \Khameleon\FileSystem
 {
+    const
+        PRETTY_PRINT_PATTERN_DEPTH = '|     ',
+        PRETTY_PRINT_PATTERN_LAST_DEPTH = '|---- ';
+    
     private
         $rootPath,
         $nodes,
@@ -305,6 +309,10 @@ class FileSystem implements \Khameleon\FileSystem
     
     public function copy($sourcePath, $targetPath, $override = false)
     {
-        
+    }
+            
+    public function __toString()
+    {
+        return $this->root->prettyPrint();
     }
 }

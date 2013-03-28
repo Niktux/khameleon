@@ -73,4 +73,31 @@ abstract class Node implements \Khameleon\Node
     {
         $this->fileSystem->updateReference($this);
     }
+    
+    protected function getDepth()
+    {
+        if($this->parent === null)
+        {
+            return 0;
+        }
+        
+        return $this->parent->getDepth() + 1;
+    }
+    
+    public function prettyPrint($depth = 0)
+    {
+        $line = '';
+        
+        for($i = 1; $i < $depth; $i++)
+        {
+            $line .= FileSystem::PRETTY_PRINT_PATTERN_DEPTH;
+        }
+        
+        if($i <= $depth)
+        {
+            $line .= FileSystem::PRETTY_PRINT_PATTERN_LAST_DEPTH;
+        }
+        
+        return $line . $this->getName();
+    }
 }

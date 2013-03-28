@@ -24,4 +24,10 @@ interface Node
      * @param boolean $override if target already exists and $override is false, a exception will be thrown
      */
     public function copyTo($target, $override = false);
+    
+    /**
+     * @params integer $depth current depth
+     * @returns string pretty filetree representation
+     */
+    public function prettyPrint($depth = 0);
 }

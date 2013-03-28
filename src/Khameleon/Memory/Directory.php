@@ -117,6 +117,17 @@ class Directory extends Node implements \Khameleon\Directory
     
     public function copyTo($target, $override = false)
     {
+    }
+
+    public function prettyPrint($depth = 0)
+    {
+        $lines = array(parent::prettyPrint($depth));
         
+        foreach($this->children as $child)
+        {
+            $lines[] = $child->prettyPrint($depth + 1);
+        }
+        
+        return implode("\n", $lines);
     }
 }

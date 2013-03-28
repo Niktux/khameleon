@@ -115,4 +115,9 @@ interface FileSystem
      * @param boolean $override if target already exists and $override is false, a exception will be thrown
      */
     public function copy($sourcePath, $targetPath, $override = false);
+    
+    /**
+     * Pretty print the whole filesystem
+     */
+    public function __toString();
 }
