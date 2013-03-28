@@ -333,11 +333,11 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         foreach($paths as $path)
         {
             $this->assertFalse($this->fs->exists($path), "$path should not exist anymore");
-            $this->assertTrue($this->fs->exists($p = str_replace('dir/', 'newdir/', $path)), "$p should has been created");
+            $this->assertTrue($this->fs->exists($p = preg_replace('~^dir/~', 'newdir/', $path)), "$p should has been created");
         }
         
         $readMeFile = reset($this->files);
         $this->assertSame('readme.txt', $readMeFile->getName());
-        $this->assertSame('newdir/readme.txt', $readMeFile->getPath());
+        $this->assertSame('/newdir/readme.txt', $readMeFile->getPath());
     }
 }
