@@ -106,4 +106,13 @@ interface FileSystem
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function rename($path, $newName);
+    
+    /**
+     * Copy a node and its children to another location
+     *
+     * @param string $sourcePath
+     * @param string $targetPath
+     * @param boolean $override if target already exists and $override is false, a exception will be thrown
+     */
+    public function copy($sourcePath, $targetPath, $override = false);
 }

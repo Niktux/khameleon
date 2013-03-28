@@ -67,4 +67,9 @@ class File extends Node implements \Khameleon\File
     {
         $this->mtime = time();
     }
+    
+    public function copyTo($target, $override = false)
+    {
+        
+    }
 }

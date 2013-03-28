@@ -302,5 +302,9 @@ class FileSystem implements \Khameleon\FileSystem
         
         $this->nodes[$absolutePath] = $node;
     }
-
+    
+    public function copy($sourcePath, $targetPath, $override = false)
+    {
+        
+    }
 }

@@ -114,4 +114,9 @@ class Directory extends Node implements \Khameleon\Directory
             $child->updatePath();
         }
     }
+    
+    public function copyTo($target, $override = false)
+    {
+        
+    }
 }
