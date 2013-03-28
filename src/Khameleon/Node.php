@@ -16,4 +16,10 @@ interface Node
      * @throws \Khameleon\Exceptions\InvalidNameException
      */
     public function rename($newName);
+    
+    /**
+     * @params integer $depth current depth
+     * @returns string pretty filetree representation
+     */
+    public function prettyPrint($depth = 0);
 }

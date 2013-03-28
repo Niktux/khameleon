@@ -106,4 +106,9 @@ interface FileSystem
      * @throws \Khameleon\Exceptions\InvalidMountingPointException
      */
     public function rename($path, $newName);
+    
+    /**
+     * Pretty print the whole filesystem
+     */
+    public function __toString();
 }
