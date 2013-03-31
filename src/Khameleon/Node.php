@@ -22,4 +22,14 @@ interface Node
      * @returns string pretty filetree representation
      */
     public function prettyPrint($depth = 0);
+    
+    /**
+     * @returns Node or null
+     */
+    public function getParent();
+    
+    /**
+     * @returns integer
+     */
+    public function getDepth();
 }

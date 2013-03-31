@@ -22,6 +22,11 @@ abstract class Node implements \Khameleon\Node
             $parent->attach($this);
         }
     }
+    
+    public function getParent()
+    {
+        return $this->parent;
+    }
 
     public function getName()
     {
@@ -69,7 +74,7 @@ abstract class Node implements \Khameleon\Node
         throw new InvalidNameException();
     }
     
-    protected function getDepth()
+    public function getDepth()
     {
         if($this->parent === null)
         {

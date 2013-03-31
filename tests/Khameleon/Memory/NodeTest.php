@@ -13,6 +13,85 @@ class NodeTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @dataProvider providerTestGetPath
+     */
+    public function testGetPath($path, $expected)
+    {
+        $this->fs->createFile('path/to/some/file');
+        
+        $node = $this->fs->get($path);
+
+        $this->assertSame($expected, $node->getPath());
+    }
+    
+    public function providerTestGetPath()
+    {
+        return array(
+            array($p = '/path/to/some/file', $p),
+            array($p = '/path/to/some', $p),
+            array($p = '/path/to', $p),
+            array($p = '/path', $p),
+            array($p = '/', ''),
+        );
+    }
+    
+    /**
+     * @dataProvider providerTestGetParent
+     */
+    public function testGetParent($path, $expectedParentPath)
+    {
+        $node = $this->fs
+            ->createFile('one/two/three/file')
+            ->get($path);
+        
+        $parent = $node->getParent();
+        $parentPath = null;
+        
+        if($parent instanceof \Khameleon\Node)
+        {
+            $parentFromPath = $this->fs->get(dirname($path));
+            $parentPath = $parent->getPath();
+            $this->assertSame($parentFromPath, $parent);
+        }
+        
+        $this->assertSame($expectedParentPath, $parentPath);
+    }
+    
+    public function providerTestGetParent()
+    {
+        return array(
+            array('one/two/three/file', '/one/two/three'),
+            array('one/two/three', '/one/two'),
+            array('one/two', '/one'),
+            array('/one', ''),
+            array('/', null),
+        );
+    }
+    
+    /**
+     * @dataProvider providerTestGetDepth
+     */
+    public function testGetDepth($path, $expectedDepth)
+    {
+        $node = $this->fs
+            ->createFile('one/two/three/file')
+            ->get($path);
+        
+        $this->assertSame($expectedDepth, $node->getDepth());
+    }
+    
+    public function providerTestGetDepth()
+    {
+        return array(
+            array('one/two/three/file', 4),
+            array('one/two/three', 3),
+            array('one/two', 2),
+            array('/one', 1),
+            array('/', 0),
+        );
+    }
+    
+    /**
      * @dataProvider providerTestRename
      */
     public function testRename($newName, $useFileSystemObject)
