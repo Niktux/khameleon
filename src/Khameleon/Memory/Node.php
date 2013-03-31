@@ -111,6 +111,7 @@ abstract class Node implements \Khameleon\Node
         if($this->parent !== null)
         {
             $this->parent->detach($this);
+            $this->parent = null;
         }
     }
 }
