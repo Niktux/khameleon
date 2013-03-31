@@ -145,4 +145,25 @@ class FileTest extends \PHPUnit_Framework_TestCase
             array('none', null),
         );
     }
+    
+    /**
+     * @dataProvider providerTestGetSize
+     */
+    public function testGetSize($content, $expectedSize)
+    {
+        $file = $this->fs->putFile('path/to/file');
+        $file->write($content);
+        
+        $this->assertSame($expectedSize, $file->getSize());
+    }
+    
+    public function providerTestGetSize()
+    {
+        return array(
+            array($s = '', 0),
+            array($s = null, 0),
+            array($s = 'toto', strlen($s)),
+            array($s = "aaaaaa\nbbbbb\n", strlen($s)),
+        );
+    }
 }

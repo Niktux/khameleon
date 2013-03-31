@@ -65,7 +65,7 @@ class File extends Node implements \Khameleon\File
     
     public function getSize()
     {
-        
+        return strlen($this->content);
     }
 
     public function getExtension()
