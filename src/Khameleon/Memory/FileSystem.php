@@ -229,7 +229,7 @@ class FileSystem implements \Khameleon\FileSystem
     {
         $node = $this->convertRemovalInputToNode($input);
         
-        if($node instanceof Directory)
+        if($node instanceof \Khameleon\Directory)
         {
             foreach($node->read() as $child)
             {

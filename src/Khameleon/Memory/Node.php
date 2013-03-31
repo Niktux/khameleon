@@ -37,7 +37,7 @@ abstract class Node implements \Khameleon\Node
     {
         $basePath = '';
         
-        if($this->parent instanceof Directory)
+        if($this->parent instanceof \Khameleon\Directory)
         {
             $basePath = $this->parent->getPath() . DIRECTORY_SEPARATOR;
         }

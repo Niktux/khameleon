@@ -29,7 +29,7 @@ class Directory extends Node implements \Khameleon\Directory
         
         foreach($this->children as $child)
         {
-            if($child instanceof Directory)
+            if($child instanceof \Khameleon\Directory)
             {
                 $allChildren->append($child->recursiveRead());
             }
