@@ -70,5 +70,14 @@ class File extends Node implements \Khameleon\File
 
     public function getExtension()
     {
+        $info = pathinfo($this->name);
+        
+        $extension = null;
+        if(isset($info['extension']))
+        {
+            $extension = $info['extension'];
+        }
+        
+        return $extension;
     }
 }

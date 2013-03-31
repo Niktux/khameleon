@@ -123,4 +123,26 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertGreaterThan($mtime4, $mtime5, 'mtime #5');
         $this->assertGreaterThan($atime4, $atime5, 'atime #5');
     }
+    
+    /**
+     * @dataProvider providerTestGetExtension
+     */
+    public function testGetExtension($file, $expectedExtension)
+    {
+        $file = $this->fs->putFile($file);
+        
+        $this->assertSame($expectedExtension, $file->getExtension());
+    }
+    
+    public function providerTestGetExtension()
+    {
+        return array(
+            array('toto.txt', 'txt'),
+            array('path/to/image.png', 'png'),
+            array('base.d', 'd'),
+            array('there.are.many.ext', 'ext'),
+            array('empty.', ''),
+            array('none', null),
+        );
+    }
 }
