@@ -4,12 +4,19 @@ namespace Khameleon\Tests\Khameleon\Memory;
 
 class FileTest extends \PHPUnit_Framework_TestCase
 {
+    const
+        CONTENT_A = 'aaaaa',
+        CONTENT_B = 'bbbb b  bbbb',
+        CONTENT_C = "cccc\ncccc\n",
+        CONTENT_D = "d";
+    
     private
         $fs;
 
     public function setUp()
     {
         $this->fs = new \Khameleon\Memory\FileSystem('/');
+        $this->fs->createFile('copy/destination/file', self::CONTENT_D);
     }
     
     public function testReadWrite()
@@ -23,9 +30,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($f->read(), "File <$path> should be empty");
         
         $content = "This the file content\n";
-        $f->write($content);
+        $return = $f->write($content);
         $this->assertNotEmpty($f->read(), "File <$path> should not be empty anymore");
         $this->assertSame($content, $f->read(), "File <$path> should contain the correct content");
+        $this->assertSame($f, $return, 'write() should return $this');
         
         $otherFile = $this->fs->putFile('path/to/other/file');
         $otherFile->write('another content');
@@ -120,5 +128,75 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($ctime, $ctime5, 'ctime #5');
         $this->assertGreaterThan($mtime4, $mtime5, 'mtime #5');
         $this->assertGreaterThan($atime4, $atime5, 'atime #5');
+    }
+    
+    /**
+     * @dataProvider providerTestCopy
+     */
+    public function testCopyTo($targetPath, $override)
+    {
+        $path = 'path/to/file';
+        $file = $this->fs->putFile($path);
+        
+        $this->assertSame($override, $this->fs->exists($targetPath), "$targetPath existence check failed");
+        
+        $file->write(self::CONTENT_A)->copyTo($targetPath, $override);
+        
+        $this->assertTrue($this->fs->exists($path), "$path should still exist");
+        $this->assertTrue($this->fs->exists($targetPath), "$targetPath should have been created");
+        
+        $copy = $this->fs->get($targetPath);
+        
+        $this->assertSame(self::CONTENT_A, $copy->read());
+        
+        $absoluteTargetPath = DIRECTORY_SEPARATOR . ltrim($targetPath, DIRECTORY_SEPARATOR);
+        $this->assertSame($absoluteTargetPath, $copy->getPath());
+        $this->assertSame(basename($absoluteTargetPath), $copy->getName());
+        
+        $file->write(self::CONTENT_B);
+        
+        $this->assertSame(self::CONTENT_B, $file->read());
+        $this->assertSame(self::CONTENT_A, $copy->read());
+        
+        $copy->write(self::CONTENT_C);
+        
+        $this->assertSame(self::CONTENT_B, $file->read());
+        $this->assertSame(self::CONTENT_C, $copy->read());
+    }
+    
+    public function providerTestCopy()
+    {
+        return array(
+            array('another/sub/tree/and/filename', false),
+            array('path/to/filename', false),
+            array('path/file', false),
+            array('/path/file', false),
+            array('/file', false),
+            array('copy/destination/file', true)
+        );
+    }
+    
+    /**
+     * @dataProvider providerTestCopyToErrorCases
+     * @expectedException \Khameleon\Exceptions\CopyException
+     */
+    public function testCopyToErrorCases($target, $override)
+    {
+        $this->fs
+            ->createFile('path/to/file', self::CONTENT_A)
+            ->createFile('path/to/otherfile', self::CONTENT_B);
+        
+        $this->fs->get('path/to/file')->copyTo($target, $override);
+    }
+    
+    public function providerTestCopyToErrorCases()
+    {
+        return array(
+            array('path/to/otherfile', false), // on existing file without override
+            array('path/to', false), // on directory
+            array('path/to', true), // on directory
+            array('path/to/file', false), // on self
+            array('path/to/file', true), // on self
+        );
     }
 }
