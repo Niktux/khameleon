@@ -62,4 +62,13 @@ class File extends Node implements \Khameleon\File
     {
         $this->mtime = time();
     }
+    
+    public function getSize()
+    {
+        
+    }
+
+    public function getExtension()
+    {
+    }
 }

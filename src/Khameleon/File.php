@@ -34,4 +34,18 @@ interface File extends Node
      * @returns int timestamp
      */
     public function getModificationTime();
+    
+    /**
+     * Returns filesize in bytes
+     *
+     * @return int
+     */
+    public function getSize();
+    
+    /**
+     * Returns file extension
+     *
+     * @returns string
+     */
+    public function getExtension();
 }
