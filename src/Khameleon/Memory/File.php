@@ -2,6 +2,8 @@
 
 namespace Khameleon\Memory;
 
+use Khameleon\Exceptions\CopyException;
+
 class File extends Node implements \Khameleon\File
 {
     private
@@ -65,6 +67,35 @@ class File extends Node implements \Khameleon\File
     
     public function copyTo($target, $override = false)
     {
+        if($this->fileSystem->isPathValid($target) === false)
+        {
+            throw new CopyException('Invalid target path');
+        }
         
+        if($this->fileSystem->exists($target))
+        {
+            if($override == false)
+            {
+                throw new CopyException("Cannot override existing path ($target)");
+            }
+            
+            $node = $this->fileSystem->get($target);
+            
+            if(! $node instanceof \Khameleon\File)
+            {
+                throw new CopyException("Copied file cannot override directory ($target)");
+            }
+            
+            if($node === $this)
+            {
+                throw new CopyException('Cannot copy to itself');
+            }
+        }
+        else
+        {
+            $node = $this->fileSystem->putFile($target);
+        }
+        
+        $node->write($this->read());
     }
 }

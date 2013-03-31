@@ -198,7 +198,13 @@ class FileTest extends \PHPUnit_Framework_TestCase
             array('path/to', false), // on directory
             array('path/to', true), // on directory
             array('path/to/file', false), // on self
-            array('path/to/file', true), // on self
+            array('path/to/file', true), // on self,
+            
+            // Invalid paths
+            array('///', true),
+            array(4, true),
+            array(array(), true),
+            array(new \StdClass, true),
         );
     }
 }
