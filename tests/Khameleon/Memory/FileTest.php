@@ -47,9 +47,11 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $nbChildren = count($dir);
         $children = iterator_to_array($dir->read());
         $this->assertContains($file, $children);
+        $this->assertNotNull($file->getParent());
         
         $file->$removeMethod();
-        
+
+        $this->assertNull($file->getParent());
         $this->assertFalse($this->fs->exists($path), "$path should not exist after remove()");
         $this->assertEquals($nbChildren - 1, count($dir));
         $children = iterator_to_array($dir->read());

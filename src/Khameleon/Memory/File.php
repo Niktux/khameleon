@@ -38,11 +38,6 @@ class File extends Node implements \Khameleon\File
         return $this;
     }
     
-    public function detachFromParent()
-    {
-        $this->parent->detach($this);
-    }
-    
     public function getCreationTime()
     {
         return $this->ctime;

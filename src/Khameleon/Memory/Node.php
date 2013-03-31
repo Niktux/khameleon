@@ -100,4 +100,13 @@ abstract class Node implements \Khameleon\Node
         
         return $line . $this->getName();
     }
+    
+    public function detachFromParent()
+    {
+        if($this->parent !== null)
+        {
+            $this->parent->detach($this);
+            $this->parent = null;
+        }
+    }
 }

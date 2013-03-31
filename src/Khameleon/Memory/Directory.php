@@ -73,14 +73,6 @@ class Directory extends Node implements \Khameleon\Directory
         return empty($this->children);
     }
     
-    public function detachFromParent()
-    {
-        if($this->parent !== null)
-        {
-            $this->parent->detach($this);
-        }
-    }
-    
     public function putFile($relativePath)
     {
         $absolutePath = $this->convertRelativePathToAbsolute($relativePath);
